@@ -65,7 +65,7 @@ export default function HeroSection() {
           className="flex items-center justify-center gap-2 text-blue-300/60 mb-4"
         >
           <MapPin size={14} />
-          <span className="text-sm tracking-wide">Based in India</span>
+          <span className="text-sm tracking-wide">Bangalore, India</span>
         </motion.div>
 
         {/* Name */}
@@ -89,7 +89,7 @@ export default function HeroSection() {
           className="mb-6"
         >
           <h2 className="text-lg sm:text-xl md:text-2xl text-blue-100/70 font-medium">
-            Full Stack Developer & Software Engineer
+            Data Scientist
           </h2>
         </motion.div>
 
@@ -100,8 +100,9 @@ export default function HeroSection() {
           transition={{ delay: 0.7, duration: 0.6 }}
           className="text-blue-200/40 text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed"
         >
-          Crafting digital experiences with clean code and innovative solutions.
-          Passionate about turning complex problems into elegant, scalable applications.
+          Applying statistical analysis and machine learning to solve complex
+          product and business problems. Translating insights into measurable
+          product improvements at scale.
         </motion.p>
 
         {/* CTA Buttons */}

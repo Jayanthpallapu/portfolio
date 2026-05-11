@@ -10,23 +10,23 @@ const contactInfo = [
   {
     icon: <Mail size={20} />,
     label: 'Email',
-    value: 'jayanth.pallapu@email.com',
-    href: 'mailto:jayanth.pallapu@email.com',
-    color: '#00d4ff',
+    value: 'jayanth.pallapu@outlook.com',
+    href: 'mailto:jayanth.pallapu@outlook.com',
+    color: '#3b82f6',
   },
   {
     icon: <MapPin size={20} />,
     label: 'Location',
-    value: 'India',
+    value: 'Bangalore, India',
     href: null,
-    color: '#8b5cf6',
+    color: '#818cf8',
   },
   {
     icon: <Phone size={20} />,
     label: 'Phone',
-    value: '+91 98765 43210',
-    href: 'tel:+919876543210',
-    color: '#10b981',
+    value: '+91 8105014369',
+    href: 'tel:+918105014369',
+    color: '#06b6d4',
   },
 ];
 
@@ -34,20 +34,20 @@ const socialLinks = [
   {
     icon: <Github size={22} />,
     label: 'GitHub',
-    href: 'https://github.com/jayanthpallapu',
-    color: '#00d4ff',
+    href: 'https://github.com/Jayanthpallapu',
+    color: '#3b82f6',
   },
   {
     icon: <Linkedin size={22} />,
     label: 'LinkedIn',
-    href: 'https://linkedin.com/in/jayanthpallapu',
-    color: '#3b82f6',
+    href: 'https://linkedin.com/in/jayanth-pallapu',
+    color: '#818cf8',
   },
   {
     icon: <Mail size={22} />,
     label: 'Email',
-    href: 'mailto:jayanth.pallapu@email.com',
-    color: '#8b5cf6',
+    href: 'mailto:jayanth.pallapu@outlook.com',
+    color: '#06b6d4',
   },
 ];
 
@@ -93,15 +93,15 @@ export default function ContactSection() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-[#00d4ff] text-sm font-mono tracking-wider uppercase mb-3"
+          className="text-[#38bdf8] text-sm font-mono tracking-wider uppercase mb-3"
         >
           Let&apos;s connect
         </motion.p>
         <h2 className="text-3xl md:text-4xl font-bold text-white">
-          Get In <span className="text-[#00d4ff] glow-text-blue">Touch</span>
+          Get In <span className="text-[#38bdf8] glow-text-blue">Touch</span>
         </h2>
         <p className="text-gray-400 mt-4 max-w-lg mx-auto">
-          Have a project in mind or want to collaborate? I&apos;d love to hear from you.
+          Have a data challenge or want to collaborate on a project? I&apos;d love to hear from you.
           Drop me a message and I&apos;ll get back to you as soon as possible.
         </p>
       </div>
@@ -142,7 +142,7 @@ export default function ContactSection() {
 
           {/* Social Links */}
           <div className="pt-4">
-            <p className="text-xs text-gray-500 uppercase tracking-wider mb-4">Follow me</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wider mb-4">Find me on</p>
             <div className="flex gap-3">
               {socialLinks.map((link) => (
                 <motion.a
@@ -186,8 +186,8 @@ export default function ContactSection() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#00d4ff]/50 focus:ring-1 focus:ring-[#00d4ff]/20 transition-all text-sm"
-                  placeholder="John Doe"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#3b82f6]/50 focus:ring-1 focus:ring-[#3b82f6]/20 transition-all text-sm"
+                  placeholder="Your Name"
                   disabled={status === 'submitting'}
                 />
               </div>
@@ -201,8 +201,8 @@ export default function ContactSection() {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#00d4ff]/50 focus:ring-1 focus:ring-[#00d4ff]/20 transition-all text-sm"
-                  placeholder="john@example.com"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#3b82f6]/50 focus:ring-1 focus:ring-[#3b82f6]/20 transition-all text-sm"
+                  placeholder="you@example.com"
                   disabled={status === 'submitting'}
                 />
               </div>
@@ -217,8 +217,8 @@ export default function ContactSection() {
                 rows={5}
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#00d4ff]/50 focus:ring-1 focus:ring-[#00d4ff]/20 transition-all text-sm resize-none"
-                placeholder="Tell me about your project..."
+                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#3b82f6]/50 focus:ring-1 focus:ring-[#3b82f6]/20 transition-all text-sm resize-none"
+                placeholder="Tell me about your data challenge..."
                 disabled={status === 'submitting'}
               />
             </div>
@@ -240,13 +240,13 @@ export default function ContactSection() {
               disabled={status === 'submitting'}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full py-3.5 rounded-xl bg-[#00d4ff] text-[#0a0a1a] font-semibold flex items-center justify-center gap-2 hover:bg-[#00e5ff] transition-all duration-300 glow-blue disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#2563eb] to-[#3b82f6] text-white font-semibold flex items-center justify-center gap-2 hover:from-[#1d4ed8] hover:to-[#2563eb] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {status === 'submitting' ? (
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                  className="w-5 h-5 border-2 border-[#0a0a1a]/30 border-t-[#0a0a1a] rounded-full"
+                  className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
                 />
               ) : status === 'success' ? (
                 <>

@@ -7,58 +7,46 @@ import SectionWrapper from './SectionWrapper';
 
 const projects = [
   {
-    name: 'CloudSync Dashboard',
+    name: 'House Price Prediction Model',
     description:
-      'Real-time cloud infrastructure monitoring platform with intelligent alerting, resource optimization, and cost analytics. Features live metrics visualization and automated incident response.',
-    tech: ['React', 'TypeScript', 'Node.js', 'AWS', 'WebSocket', 'D3.js'],
-    color: '#00d4ff',
-    github: '#',
+      'Developed an end-to-end predictive modeling pipeline in Python to estimate residential property values, beginning with rigorous Exploratory Data Analysis (EDA) to handle skewness, identify outliers, and map feature correlations.',
+    tech: ['Python', 'Pandas', 'NumPy', 'Scikit-learn', 'EDA', 'Feature Engineering'],
+    color: '#3b82f6',
+    github: 'https://github.com/Jayanthpallapu',
     live: '#',
+    highlights: [
+      'Strategic imputation, One-Hot encoding, and feature scaling',
+      'Rigorous EDA for skewness and outlier detection',
+      'Feature correlation mapping and high-impact variable engineering',
+    ],
   },
   {
-    name: 'EcoTrack',
+    name: 'Customer Churn Prediction ML Pipeline',
     description:
-      'Sustainability tracking application that helps organizations measure, report, and reduce their carbon footprint. Integrates with IoT sensors for real-time environmental data collection.',
-    tech: ['Next.js', 'Python', 'PostgreSQL', 'Docker', 'GraphQL', 'Tailwind'],
-    color: '#10b981',
-    github: '#',
+      'Engineered an end-to-end Customer Churn Prediction system using Python, beginning with rigorous EDA utilizing cohort analysis and feature interaction maps to identify key drivers of attrition.',
+    tech: ['Python', 'Apache Airflow', 'Streamlit', 'Scikit-learn', 'MLOps', 'SQL'],
+    color: '#818cf8',
+    github: 'https://github.com/Jayanthpallapu',
     live: '#',
+    highlights: [
+      'Automated MLOps pipeline with Apache Airflow',
+      'Daily ETL orchestration, data validation, and model retraining',
+      'Real-time risk scoring with Streamlit dashboard',
+    ],
   },
   {
-    name: 'DevFlow',
+    name: 'Lumina Code Suite',
     description:
-      'Developer workflow automation tool that streamlines CI/CD pipelines, code reviews, and deployment processes. Features AI-powered code suggestions and automated testing orchestration.',
-    tech: ['TypeScript', 'Go', 'Redis', 'Kubernetes', 'gRPC', 'React'],
-    color: '#8b5cf6',
-    github: '#',
-    live: '#',
-  },
-  {
-    name: 'MediConnect',
-    description:
-      'Healthcare telemedicine platform enabling secure video consultations, appointment scheduling, and electronic health records management with HIPAA-compliant architecture.',
-    tech: ['React', 'Node.js', 'WebRTC', 'MongoDB', 'AWS', 'Socket.io'],
-    color: '#f43f5e',
-    github: '#',
-    live: '#',
-  },
-  {
-    name: 'FinanceHub',
-    description:
-      'Personal finance management system with AI-driven budget insights, expense tracking, investment portfolio analytics, and automated savings recommendations.',
-    tech: ['Next.js', 'Python', 'PostgreSQL', 'Plaid API', 'Redis', 'Chart.js'],
-    color: '#f59e0b',
-    github: '#',
-    live: '#',
-  },
-  {
-    name: 'SmartLearn AI',
-    description:
-      'AI-powered learning management system with adaptive curriculum, intelligent tutoring, progress analytics, and personalized content recommendations using machine learning.',
-    tech: ['Vue.js', 'Django', 'TensorFlow', 'PostgreSQL', 'Docker', 'AWS'],
+      'A web application showcasing data science projects and analytics solutions. Features interactive dashboards and data visualization tools for business intelligence and reporting.',
+    tech: ['Python', 'Data Visualization', 'SQL', 'Statistics', 'Dashboard'],
     color: '#06b6d4',
-    github: '#',
-    live: '#',
+    github: 'https://github.com/Jayanthpallapu',
+    live: 'https://lumina-code-suite.lovable.app',
+    highlights: [
+      'Interactive analytics dashboards',
+      'Business intelligence reporting',
+      'Data visualization for stakeholder insights',
+    ],
   },
 ];
 
@@ -73,12 +61,12 @@ export default function ProjectsSection() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-[#00d4ff] text-sm font-mono tracking-wider uppercase mb-3"
+          className="text-[#38bdf8] text-sm font-mono tracking-wider uppercase mb-3"
         >
           What I&apos;ve built
         </motion.p>
         <h2 className="text-3xl md:text-4xl font-bold text-white">
-          Featured <span className="text-[#00d4ff] glow-text-blue">Projects</span>
+          Featured <span className="text-[#38bdf8] glow-text-blue">Projects</span>
         </h2>
       </div>
 
@@ -90,7 +78,7 @@ export default function ProjectsSection() {
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: i * 0.1, duration: 0.6, ease: 'easeOut' }}
             whileHover={{ y: -8, scale: 1.02 }}
-            className="glass rounded-2xl p-6 group cursor-pointer transition-all duration-300"
+            className="glass rounded-2xl p-6 group cursor-pointer transition-all duration-300 flex flex-col"
             onMouseEnter={(e) => {
               e.currentTarget.style.boxShadow = `0 0 30px ${project.color}20`;
               e.currentTarget.style.borderColor = `${project.color}30`;
@@ -113,8 +101,18 @@ export default function ProjectsSection() {
               {project.description}
             </p>
 
+            {/* Highlights */}
+            <ul className="space-y-1.5 mb-4">
+              {project.highlights.map((h) => (
+                <li key={h} className="flex items-start gap-2 text-xs text-gray-500">
+                  <span className="mt-1 w-1 h-1 rounded-full flex-shrink-0" style={{ backgroundColor: project.color }} />
+                  <span>{h}</span>
+                </li>
+              ))}
+            </ul>
+
             {/* Tech Tags */}
-            <div className="flex flex-wrap gap-2 mb-5">
+            <div className="flex flex-wrap gap-2 mb-5 mt-auto">
               {project.tech.map((t) => (
                 <span
                   key={t}
@@ -134,16 +132,19 @@ export default function ProjectsSection() {
             <div className="flex items-center gap-4 pt-2 border-t border-white/5">
               <a
                 href={project.github}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-white transition-colors"
-                onClick={(e) => e.preventDefault()}
               >
                 <Github size={16} />
                 <span>Code</span>
               </a>
               <a
                 href={project.live}
+                target={project.live.startsWith('http') ? '_blank' : undefined}
+                rel={project.live.startsWith('http') ? 'noopener noreferrer' : undefined}
                 className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-white transition-colors"
-                onClick={(e) => e.preventDefault()}
+                onClick={(e) => { if (project.live === '#') e.preventDefault(); }}
               >
                 <ExternalLink size={16} />
                 <span>Live Demo</span>

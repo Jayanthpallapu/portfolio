@@ -2,33 +2,33 @@
 
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { Code2, Rocket, Trophy, Users } from 'lucide-react';
+import { Brain, BarChart3, Database, GitBranch } from 'lucide-react';
 import SectionWrapper from './SectionWrapper';
 
 const highlights = [
   {
-    icon: <Rocket size={28} />,
-    value: '7+',
-    label: 'Years Experience',
-    color: '#00d4ff',
-  },
-  {
-    icon: <Code2 size={28} />,
-    value: '50+',
-    label: 'Projects Completed',
-    color: '#0ff',
-  },
-  {
-    icon: <Users size={28} />,
-    value: '100K+',
-    label: 'Users Impacted',
-    color: '#8b5cf6',
-  },
-  {
-    icon: <Trophy size={28} />,
-    value: '15+',
-    label: 'Technologies Mastered',
+    icon: <Brain size={28} />,
+    value: '3+',
+    label: 'Years in Data Science',
     color: '#3b82f6',
+  },
+  {
+    icon: <BarChart3 size={28} />,
+    value: '4',
+    label: 'Companies Worked',
+    color: '#38bdf8',
+  },
+  {
+    icon: <Database size={28} />,
+    value: 'End-to-End',
+    label: 'Analytics Pipelines',
+    color: '#818cf8',
+  },
+  {
+    icon: <GitBranch size={28} />,
+    value: 'A/B Testing',
+    label: 'Experimentation Expert',
+    color: '#06b6d4',
   },
 ];
 
@@ -43,12 +43,12 @@ export default function AboutSection() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-[#00d4ff] text-sm font-mono tracking-wider uppercase mb-3"
+          className="text-[#38bdf8] text-sm font-mono tracking-wider uppercase mb-3"
         >
           Get to know me
         </motion.p>
         <h2 className="text-3xl md:text-4xl font-bold text-white">
-          About <span className="text-[#00d4ff] glow-text-blue">Me</span>
+          About <span className="text-[#38bdf8] glow-text-blue">Me</span>
         </h2>
       </div>
 
@@ -62,24 +62,24 @@ export default function AboutSection() {
           className="space-y-5"
         >
           <p className="text-gray-300 leading-relaxed text-lg">
-            I&apos;m Jayanth Pallapu, a passionate Full Stack Developer with expertise
-            in building scalable web applications and creating seamless user
-            experiences. With a strong foundation in both frontend and backend
-            technologies, I bring ideas to life through clean code and innovative
-            solutions.
+            I&apos;m Jayanth Pallapu, a Data Scientist with strong experience applying
+            statistical analysis and machine learning to solve complex product and
+            business problems. I have a proven track record of building end-to-end
+            analytics pipelines, developing predictive models, running experiments
+            (A/B testing), and translating insights into measurable product improvements.
           </p>
           <p className="text-gray-400 leading-relaxed">
-            My journey in software development has been driven by a curiosity for
-            how things work and a desire to build tools that make a difference.
-            From architecting microservices that handle millions of requests to
-            crafting pixel-perfect user interfaces, I thrive on tackling
-            challenging problems across the full stack.
+            I&apos;m experienced in collaborating with Product Managers, Engineers, and UX
+            teams to define success metrics, influence product direction, and drive
+            data-informed decisions at scale. My expertise spans from exploratory data
+            analysis and feature engineering to model deployment and performance monitoring
+            in production environments.
           </p>
           <p className="text-gray-400 leading-relaxed">
-            When I&apos;m not coding, you&apos;ll find me exploring new technologies,
-            contributing to open-source projects, and mentoring aspiring
-            developers. I believe in continuous learning and pushing the
-            boundaries of what&apos;s possible with technology.
+            With a solid foundation in Python, statistical inference, and machine learning,
+            I thrive on uncovering hidden patterns in data and turning them into actionable
+            strategies that create real business impact. I hold a B.Com in Computer
+            Applications from Sri Venkateswara University, Tirupathi.
           </p>
         </motion.div>
 

@@ -72,7 +72,7 @@ export default function Navigation() {
               className="text-lg md:text-xl font-bold tracking-wider"
               whileHover={{ scale: 1.05 }}
             >
-              <span className="text-[#00d4ff] glow-text-blue">J</span>
+              <span className="text-[#38bdf8] glow-text-blue">J</span>
               <span className="text-white">AYANTH</span>
             </motion.a>
 
@@ -88,14 +88,14 @@ export default function Navigation() {
                   }}
                   className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-300 ${
                     activeSection === link.href.slice(1)
-                      ? 'text-[#00d4ff]'
+                      ? 'text-[#38bdf8]'
                       : 'text-gray-400 hover:text-white'
                   }`}
                 >
                   {activeSection === link.href.slice(1) && (
                     <motion.div
                       layoutId="activeNav"
-                      className="absolute inset-0 bg-white/5 rounded-lg border border-[#00d4ff]/20"
+                      className="absolute inset-0 bg-white/5 rounded-lg border border-[#38bdf8]/20"
                       transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                     />
                   )}
@@ -151,7 +151,7 @@ export default function Navigation() {
                     transition={{ delay: i * 0.1 }}
                     className={`w-full px-4 py-3 text-lg font-medium rounded-lg transition-colors ${
                       activeSection === link.href.slice(1)
-                        ? 'text-[#00d4ff] bg-white/5'
+                        ? 'text-[#38bdf8] bg-white/5'
                         : 'text-gray-400 hover:text-white hover:bg-white/5'
                     }`}
                   >

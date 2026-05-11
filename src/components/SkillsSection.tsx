@@ -17,46 +17,47 @@ interface SkillCategory {
 
 const skillCategories: SkillCategory[] = [
   {
-    title: 'Frontend',
-    color: '#00d4ff',
+    title: 'Python & ML',
+    color: '#3b82f6',
     skills: [
-      { name: 'React', level: 95 },
-      { name: 'Next.js', level: 92 },
-      { name: 'TypeScript', level: 90 },
-      { name: 'Tailwind CSS', level: 93 },
-      { name: 'Vue.js', level: 78 },
+      { name: 'Python', level: 95 },
+      { name: 'Pandas & NumPy', level: 93 },
+      { name: 'Scikit-learn', level: 90 },
+      { name: 'Exploratory Data Analysis', level: 92 },
+      { name: 'Supervised Learning', level: 88 },
     ],
   },
   {
-    title: 'Backend',
-    color: '#8b5cf6',
+    title: 'Statistics',
+    color: '#818cf8',
     skills: [
-      { name: 'Node.js', level: 92 },
-      { name: 'Python', level: 85 },
-      { name: 'Java', level: 75 },
-      { name: 'Express', level: 90 },
-      { name: 'Django', level: 80 },
+      { name: 'Inferential Statistics', level: 90 },
+      { name: 'Hypothesis Testing', level: 88 },
+      { name: 'A/B Experimental Design', level: 85 },
+      { name: 'Regression Analysis', level: 87 },
+      { name: 'Probability Theory', level: 85 },
     ],
   },
   {
-    title: 'Database',
-    color: '#10b981',
+    title: 'Data & Databases',
+    color: '#06b6d4',
     skills: [
-      { name: 'PostgreSQL', level: 88 },
-      { name: 'MongoDB', level: 85 },
-      { name: 'Redis', level: 82 },
-      { name: 'MySQL', level: 80 },
+      { name: 'SQL', level: 92 },
+      { name: 'Data Wrangling', level: 90 },
+      { name: 'Database Management', level: 85 },
+      { name: 'Data Warehousing', level: 80 },
+      { name: 'ETL Pipelines', level: 82 },
     ],
   },
   {
-    title: 'DevOps & Tools',
-    color: '#f59e0b',
+    title: 'Tools & MLOps',
+    color: '#38bdf8',
     skills: [
-      { name: 'Docker', level: 88 },
-      { name: 'AWS', level: 82 },
-      { name: 'Git', level: 95 },
-      { name: 'CI/CD', level: 85 },
-      { name: 'Kubernetes', level: 75 },
+      { name: 'Git & Version Control', level: 88 },
+      { name: 'Apache Airflow', level: 78 },
+      { name: 'Streamlit', level: 82 },
+      { name: 'Data Visualization', level: 85 },
+      { name: 'MLOps & Model Monitoring', level: 80 },
     ],
   },
 ];
@@ -96,7 +97,7 @@ function SkillBar({ skill, color, delay }: { skill: Skill; color: string; delay:
 }
 
 export default function SkillsSection() {
-  const [activeCategory, setActiveCategory] = useState<string>('Frontend');
+  const [activeCategory, setActiveCategory] = useState<string>('Python & ML');
   const gridRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(gridRef, { once: true, margin: '-50px' });
 
@@ -109,12 +110,12 @@ export default function SkillsSection() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-[#00d4ff] text-sm font-mono tracking-wider uppercase mb-3"
+          className="text-[#38bdf8] text-sm font-mono tracking-wider uppercase mb-3"
         >
           Technologies I work with
         </motion.p>
         <h2 className="text-3xl md:text-4xl font-bold text-white">
-          Skills & <span className="text-[#00d4ff] glow-text-blue">Expertise</span>
+          Skills & <span className="text-[#38bdf8] glow-text-blue">Expertise</span>
         </h2>
       </div>
 
@@ -168,13 +169,14 @@ export default function SkillsSection() {
           <p className="text-gray-500 text-sm mb-4">Also experienced with</p>
           <div className="flex flex-wrap justify-center gap-2">
             {[
-              'GraphQL', 'REST API', 'Figma', 'Jest', 'Cypress', 'Prisma',
-              'Linux', 'Nginx', 'Terraform', 'RabbitMQ', 'Elasticsearch',
-              'Storybook', 'Webpack', 'Vite', 'Sass', 'Redux',
+              'Predictive Modeling', 'Feature Engineering', 'Cohort Analysis',
+              'Root Cause Analysis', 'Data Cleaning', 'One-Hot Encoding',
+              'Model Evaluation', 'Business KPIs', 'Fraud Detection',
+              'Anomaly Detection', 'Stakeholder Reporting', 'Cross-functional Collaboration',
             ].map((skill) => (
               <span
                 key={skill}
-                className="px-3 py-1.5 text-xs rounded-lg text-gray-400 bg-white/5 border border-white/5 hover:border-[#00d4ff]/30 hover:text-[#00d4ff] transition-colors duration-200 cursor-default"
+                className="px-3 py-1.5 text-xs rounded-lg text-gray-400 bg-white/5 border border-white/5 hover:border-[#38bdf8]/30 hover:text-[#38bdf8] transition-colors duration-200 cursor-default"
               >
                 {skill}
               </span>

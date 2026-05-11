@@ -7,49 +7,60 @@ import SectionWrapper from './SectionWrapper';
 
 const experiences = [
   {
-    company: 'TechVista Solutions',
-    role: 'Senior Software Engineer',
-    duration: '2022 — Present',
+    company: 'Matrimony.com',
+    role: 'Team Leader — Data Science',
+    duration: 'May 2025 — Nov 2025 | Chennai, India',
     description:
-      'Leading the development of microservices architecture serving 100K+ daily active users. Spearheading migration from monolithic to distributed systems, reducing response times by 60%.',
+      'Supported classification and regression use cases by preparing high-quality analytical datasets, performing feature engineering, and validating data inputs for predictive modeling and inference.',
     achievements: [
-      'Architected event-driven microservices handling 1M+ daily requests',
-      'Reduced deployment time by 75% through CI/CD pipeline optimization',
-      'Mentored team of 5 junior developers on best practices',
-      'Implemented real-time monitoring with custom alerting systems',
+      'Prepared high-quality analytical datasets with rigorous feature engineering for predictive modeling',
+      'Analyzed system and operational performance metrics to identify optimization opportunities',
+      'Contributed insights that informed model evaluation criteria and business KPIs',
     ],
-    tech: ['Node.js', 'TypeScript', 'AWS', 'Docker', 'Kubernetes', 'Redis'],
-    color: '#00d4ff',
-  },
-  {
-    company: 'InnovateTech Inc.',
-    role: 'Full Stack Developer',
-    duration: '2020 — 2022',
-    description:
-      'Built real-time collaboration features and RESTful APIs for enterprise SaaS platform. Delivered high-impact features that increased user engagement by 40%.',
-    achievements: [
-      'Developed WebSocket-based real-time collaboration engine',
-      'Built RESTful API serving 500K+ requests per day',
-      'Implemented OAuth2 and role-based access control system',
-      'Optimized database queries reducing load time by 45%',
-    ],
-    tech: ['React', 'Python', 'Django', 'PostgreSQL', 'WebSocket', 'Redis'],
-    color: '#8b5cf6',
-  },
-  {
-    company: 'CodeCraft Labs',
-    role: 'Junior Developer',
-    duration: '2018 — 2020',
-    description:
-      'Developed responsive web applications and implemented automated testing frameworks. Contributed to open-source projects and internal tooling.',
-    achievements: [
-      'Built 10+ responsive web applications from scratch',
-      'Implemented automated testing achieving 90% code coverage',
-      'Created internal CLI tools improving developer productivity',
-      'Contributed to 3 open-source libraries with 500+ GitHub stars',
-    ],
-    tech: ['JavaScript', 'Vue.js', 'Express', 'MongoDB', 'Jest', 'Git'],
+    tech: ['Python', 'Pandas', 'NumPy', 'Scikit-learn', 'SQL', 'A/B Testing'],
     color: '#3b82f6',
+  },
+  {
+    company: 'Gusto Software Solutions Pvt, Ltd',
+    role: 'Team Lead — Data Science',
+    duration: 'May 2024 — May 2025 | Hyderabad, India',
+    description:
+      'Evaluated the impact of process changes by comparing pre- and post-implementation metrics, effectively supporting experimentation and continuous optimization initiatives.',
+    achievements: [
+      'Managed and monitored ML model performance in production environments',
+      'Worked closely with product teams to evaluate statistical accuracy and error patterns',
+      'Identified high-impact use cases for continuous model improvement and optimization',
+    ],
+    tech: ['Python', 'Machine Learning', 'SQL', 'Statistical Analysis', 'MLOps'],
+    color: '#818cf8',
+  },
+  {
+    company: 'Concentrix Technologies Pvt Ltd',
+    role: 'Technical Support Specialist',
+    duration: 'May 2023 — Apr 2024 | Bangalore, India',
+    description:
+      'Prepared and validated infrastructure and support datasets for downstream analytical modeling by cleaning, structuring, and standardizing incident data.',
+    achievements: [
+      'Analyzed large-scale support datasets to identify recurring issue patterns and trend deviations',
+      'Enabled data-backed recommendations to improve customer experience and system reliability',
+      'Identified frequency distributions and statistical anomalies in support data',
+    ],
+    tech: ['Python', 'SQL', 'Data Analysis', 'Statistical Summaries', 'Visualization'],
+    color: '#06b6d4',
+  },
+  {
+    company: 'IEnergizer Pvt Ltd',
+    role: 'Customer Service Representative',
+    duration: 'Jun 2022 — Apr 2023 | Bangalore, India',
+    description:
+      'Conducted analytical evaluation of customer order datasets to identify fraud patterns and anomalies, supporting reduction of false positives through quantitative analysis.',
+    achievements: [
+      'Developed and delivered Root Cause Analysis (RCA) reports using statistical summaries and data visualization',
+      'Identified fraud patterns and anomalies, reducing false positives through quantitative analysis',
+      'Collaborated with clients and internal teams to translate analytical findings into actionable insights',
+    ],
+    tech: ['Python', 'Data Visualization', 'RCA', 'Quantitative Analysis', 'Reporting'],
+    color: '#38bdf8',
   },
 ];
 
@@ -64,18 +75,18 @@ export default function ExperienceSection() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-[#00d4ff] text-sm font-mono tracking-wider uppercase mb-3"
+          className="text-[#38bdf8] text-sm font-mono tracking-wider uppercase mb-3"
         >
           My professional journey
         </motion.p>
         <h2 className="text-3xl md:text-4xl font-bold text-white">
-          Work <span className="text-[#00d4ff] glow-text-blue">Experience</span>
+          Work <span className="text-[#38bdf8] glow-text-blue">Experience</span>
         </h2>
       </div>
 
       <div ref={timelineRef} className="relative">
         {/* Timeline line */}
-        <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-[#00d4ff]/50 via-[#8b5cf6]/50 to-[#3b82f6]/50 md:-translate-x-px" />
+        <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-[#3b82f6]/50 via-[#818cf8]/50 to-[#38bdf8]/50 md:-translate-x-px" />
 
         <div className="space-y-12">
           {experiences.map((exp, i) => (
@@ -163,6 +174,26 @@ export default function ExperienceSection() {
           ))}
         </div>
       </div>
+
+      {/* Education Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.3, duration: 0.7 }}
+        className="mt-16 glass rounded-2xl p-6 max-w-2xl mx-auto"
+      >
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-[#3b82f6]/10 text-[#3b82f6]">
+            <Briefcase size={20} />
+          </div>
+          <div>
+            <h3 className="text-white font-semibold text-lg">B.Com Computer Applications</h3>
+            <p className="text-[#38bdf8] text-sm font-medium">Sri Venkateswara University, Tirupathi</p>
+          </div>
+        </div>
+        <p className="text-gray-500 text-sm font-mono ml-13">Graduated: Sep 2022</p>
+      </motion.div>
     </SectionWrapper>
   );
 }
