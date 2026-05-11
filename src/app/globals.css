@@ -156,7 +156,7 @@
   box-shadow: 0 0 20px rgba(139, 92, 246, 0.3), 0 0 40px rgba(139, 92, 246, 0.1);
 }
 .glow-text-blue {
-  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5), 0 0 20px rgba(0, 212, 255, 0.3);
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.5), 0 0 20px rgba(59, 130, 246, 0.3), 0 0 40px rgba(59, 130, 246, 0.1);
 }
 .glow-text-cyan {
   text-shadow: 0 0 10px rgba(0, 255, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.3);
@@ -184,7 +184,7 @@
 }
 
 .gradient-border {
-  background: linear-gradient(135deg, #00d4ff, #8b5cf6, #0ff, #00d4ff);
+  background: linear-gradient(135deg, #1e3a8a, #3b82f6, #38bdf8, #818cf8, #1e3a8a);
   background-size: 300% 300%;
   animation: gradient-border 4s ease infinite;
 }
@@ -218,6 +218,39 @@
 
 /* Selection */
 ::selection {
-  background: rgba(0, 212, 255, 0.3);
+  background: rgba(59, 130, 246, 0.3);
   color: #fff;
+}
+
+/* Liquid flow shimmer for CTA buttons */
+@keyframes liquid-shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.liquid-shimmer {
+  background-size: 200% auto;
+  animation: liquid-shimmer 3s linear infinite;
+}
+
+/* Subtle blue ambient glow on the hero section */
+@keyframes ambient-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+
+.ambient-glow {
+  animation: ambient-pulse 6s ease-in-out infinite;
+}
+
+/* Gradient text animation for name */
+@keyframes gradient-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.gradient-flow-text {
+  background-size: 200% 200%;
+  animation: gradient-flow 4s ease infinite;
 }

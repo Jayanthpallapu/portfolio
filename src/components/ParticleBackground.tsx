@@ -2,20 +2,34 @@
 
 import { useEffect, useRef } from 'react';
 
-interface Particle {
+/**
+ * Liquid Blue Flow Background
+ * Creates a mesmerizing, organic blue liquid gradient animation
+ * with smooth undulating waves, soft internal glow, and deep navy-to-royal-blue flow.
+ *
+ * Inspired by premium tech landing pages with flowing liquid gradient aesthetics.
+ */
+
+interface FlowBlob {
   x: number;
   y: number;
-  vx: number;
-  vy: number;
-  size: number;
-  opacity: number;
+  radiusX: number;
+  radiusY: number;
+  speedX: number;
+  speedY: number;
+  phase: number;
+  phaseSpeed: number;
   color: string;
+  opacity: number;
+  pulseSpeed: number;
+  pulsePhase: number;
 }
 
 export default function ParticleBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>(0);
-  const particlesRef = useRef<Particle[]>([]);
+  const blobsRef = useRef<FlowBlob[]>([]);
+  const timeRef = useRef<number>(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -31,67 +45,226 @@ export default function ParticleBackground() {
     resize();
     window.addEventListener('resize', resize);
 
-    const colors = [
-      'rgba(0, 212, 255, ',
-      'rgba(0, 255, 255, ',
-      'rgba(59, 130, 246, ',
-      'rgba(139, 92, 246, ',
+    const w = () => canvas.width;
+    const h = () => canvas.height;
+
+    // Create flowing blobs — the core of the liquid effect
+    const blobConfigs: Partial<FlowBlob>[] = [
+      // Large primary blobs — deep royal blue core
+      {
+        x: 0.3, y: 0.4, radiusX: 0.45, radiusY: 0.5,
+        speedX: 0.0003, speedY: 0.0002, phase: 0,
+        phaseSpeed: 0.0008, color: '#1e3a8a', opacity: 0.7,
+        pulseSpeed: 0.0005, pulsePhase: 0,
+      },
+      {
+        x: 0.7, y: 0.5, radiusX: 0.4, radiusY: 0.45,
+        speedX: -0.0002, speedY: 0.0003, phase: 2,
+        phaseSpeed: 0.0006, color: '#1d4ed8', opacity: 0.65,
+        pulseSpeed: 0.0004, pulsePhase: 1.5,
+      },
+      // Medium blobs — vibrant blue
+      {
+        x: 0.5, y: 0.3, radiusX: 0.35, radiusY: 0.3,
+        speedX: 0.0004, speedY: -0.0002, phase: 1,
+        phaseSpeed: 0.001, color: '#2563eb', opacity: 0.5,
+        pulseSpeed: 0.0006, pulsePhase: 0.8,
+      },
+      {
+        x: 0.2, y: 0.7, radiusX: 0.3, radiusY: 0.35,
+        speedX: -0.0003, speedY: -0.0001, phase: 3,
+        phaseSpeed: 0.0007, color: '#3b82f6', opacity: 0.45,
+        pulseSpeed: 0.0005, pulsePhase: 2.2,
+      },
+      // Glowing accent blobs — electric/cyan blue
+      {
+        x: 0.6, y: 0.6, radiusX: 0.25, radiusY: 0.2,
+        speedX: 0.0005, speedY: 0.0003, phase: 0.5,
+        phaseSpeed: 0.0012, color: '#0ea5e9', opacity: 0.4,
+        pulseSpeed: 0.0007, pulsePhase: 3.0,
+      },
+      {
+        x: 0.4, y: 0.2, radiusX: 0.2, radiusY: 0.25,
+        speedX: -0.0004, speedY: 0.0004, phase: 1.5,
+        phaseSpeed: 0.0009, color: '#06b6d4', opacity: 0.35,
+        pulseSpeed: 0.0008, pulsePhase: 1.0,
+      },
+      // Bright highlight blobs — intense glow spots
+      {
+        x: 0.5, y: 0.5, radiusX: 0.15, radiusY: 0.18,
+        speedX: 0.0002, speedY: -0.0003, phase: 2.5,
+        phaseSpeed: 0.0015, color: '#38bdf8', opacity: 0.5,
+        pulseSpeed: 0.001, pulsePhase: 0.3,
+      },
+      {
+        x: 0.8, y: 0.3, radiusX: 0.18, radiusY: 0.15,
+        speedX: -0.0003, speedY: 0.0002, phase: 4,
+        phaseSpeed: 0.001, color: '#0284c7', opacity: 0.4,
+        pulseSpeed: 0.0006, pulsePhase: 4.0,
+      },
+      // Deep dark undertone blobs
+      {
+        x: 0.15, y: 0.3, radiusX: 0.3, radiusY: 0.35,
+        speedX: 0.0001, speedY: 0.0001, phase: 5,
+        phaseSpeed: 0.0005, color: '#172554', opacity: 0.6,
+        pulseSpeed: 0.0003, pulsePhase: 2.0,
+      },
+      {
+        x: 0.85, y: 0.7, radiusX: 0.28, radiusY: 0.25,
+        speedX: -0.0002, speedY: -0.0002, phase: 1.2,
+        phaseSpeed: 0.0006, color: '#1e1b4b', opacity: 0.55,
+        pulseSpeed: 0.0004, pulsePhase: 3.5,
+      },
+      // Electric neon accent
+      {
+        x: 0.5, y: 0.45, radiusX: 0.12, radiusY: 0.1,
+        speedX: 0.0006, speedY: 0.0004, phase: 3.5,
+        phaseSpeed: 0.002, color: '#00d4ff', opacity: 0.25,
+        pulseSpeed: 0.0012, pulsePhase: 0.5,
+      },
     ];
 
-    const particleCount = Math.min(80, Math.floor(window.innerWidth / 15));
-
-    // Initialize particles
-    particlesRef.current = Array.from({ length: particleCount }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * 0.5,
-      vy: (Math.random() - 0.5) * 0.5,
-      size: Math.random() * 2 + 0.5,
-      opacity: Math.random() * 0.5 + 0.2,
-      color: colors[Math.floor(Math.random() * colors.length)],
+    blobsRef.current = blobConfigs.map((config) => ({
+      x: (config.x || 0.5) * w(),
+      y: (config.y || 0.5) * h(),
+      radiusX: (config.radiusX || 0.3) * Math.max(w(), h()),
+      radiusY: (config.radiusY || 0.3) * Math.max(w(), h()),
+      speedX: config.speedX || 0,
+      speedY: config.speedY || 0,
+      phase: config.phase || 0,
+      phaseSpeed: config.phaseSpeed || 0.001,
+      color: config.color || '#2563eb',
+      opacity: config.opacity || 0.5,
+      pulseSpeed: config.pulseSpeed || 0.0005,
+      pulsePhase: config.pulsePhase || 0,
     }));
 
+    const hexToRgb = (hex: string) => {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result
+        ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) }
+        : { r: 0, g: 100, b: 255 };
+    };
+
     const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const particles = particlesRef.current;
+      timeRef.current += 1;
+      const t = timeRef.current;
+      const cw = w();
+      const ch = h();
 
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
+      // Dark base
+      ctx.fillStyle = '#020617';
+      ctx.fillRect(0, 0, cw, ch);
 
-        // Update position
-        p.x += p.vx;
-        p.y += p.vy;
+      // Set composite for additive-like blending
+      ctx.globalCompositeOperation = 'screen';
 
-        // Wrap around
-        if (p.x < 0) p.x = canvas.width;
-        if (p.x > canvas.width) p.x = 0;
-        if (p.y < 0) p.y = canvas.height;
-        if (p.y > canvas.height) p.y = 0;
+      const blobs = blobsRef.current;
 
-        // Draw particle
+      for (const blob of blobs) {
+        // Organic movement using sine waves
+        const moveX = Math.sin(t * blob.speedX + blob.phase) * cw * 0.15
+                     + Math.sin(t * blob.speedX * 1.7 + blob.phase * 0.5) * cw * 0.08;
+        const moveY = Math.cos(t * blob.speedY + blob.phase) * ch * 0.12
+                     + Math.cos(t * blob.speedY * 1.3 + blob.phase * 0.7) * ch * 0.06;
+
+        const cx = blob.x + moveX;
+        const cy = blob.y + moveY;
+
+        // Pulsing radius
+        const pulse = 1 + 0.15 * Math.sin(t * blob.pulseSpeed + blob.pulsePhase);
+        const rx = blob.radiusX * pulse;
+        const ry = blob.radiusY * pulse;
+
+        const rgb = hexToRgb(blob.color);
+
+        // Draw multiple layered gradients per blob for rich, smooth blending
+        // Layer 1: Wide soft outer glow
+        const outerGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(rx, ry) * 1.5);
+        outerGrad.addColorStop(0, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${blob.opacity * 0.3})`);
+        outerGrad.addColorStop(0.4, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${blob.opacity * 0.15})`);
+        outerGrad.addColorStop(1, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`);
+
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = p.color + p.opacity + ')';
+        ctx.ellipse(cx, cy, rx * 1.5, ry * 1.5, Math.sin(t * 0.0003 + blob.phase) * 0.3, 0, Math.PI * 2);
+        ctx.fillStyle = outerGrad;
         ctx.fill();
 
-        // Draw connections
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dx = p.x - p2.x;
-          const dy = p.y - p2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+        // Layer 2: Core blob with richer color
+        const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(rx, ry) * 0.8);
+        coreGrad.addColorStop(0, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${blob.opacity * 0.6})`);
+        coreGrad.addColorStop(0.3, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${blob.opacity * 0.35})`);
+        coreGrad.addColorStop(0.7, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${blob.opacity * 0.1})`);
+        coreGrad.addColorStop(1, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`);
 
-          if (dist < 150) {
-            const lineOpacity = (1 - dist / 150) * 0.15;
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(0, 212, 255, ${lineOpacity})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, rx * 0.8, ry * 0.8, Math.cos(t * 0.0002 + blob.phase) * 0.2, 0, Math.PI * 2);
+        ctx.fillStyle = coreGrad;
+        ctx.fill();
+
+        // Layer 3: Bright center highlight for inner glow
+        if (blob.opacity > 0.35) {
+          const highlightGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(rx, ry) * 0.3);
+          highlightGrad.addColorStop(0, `rgba(${Math.min(rgb.r + 60, 255)}, ${Math.min(rgb.g + 60, 255)}, ${Math.min(rgb.b + 40, 255)}, ${blob.opacity * 0.4})`);
+          highlightGrad.addColorStop(1, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`);
+
+          ctx.beginPath();
+          ctx.ellipse(cx, cy, rx * 0.3, ry * 0.3, 0, 0, Math.PI * 2);
+          ctx.fillStyle = highlightGrad;
+          ctx.fill();
         }
       }
+
+      // Reset composite
+      ctx.globalCompositeOperation = 'source-over';
+
+      // Add subtle flowing wave lines across the scene
+      ctx.globalCompositeOperation = 'screen';
+      for (let wave = 0; wave < 4; wave++) {
+        ctx.beginPath();
+        const waveY = ch * (0.3 + wave * 0.15);
+        const amplitude = 30 + wave * 15;
+        const frequency = 0.003 + wave * 0.001;
+        const speed = t * (0.0005 + wave * 0.0002);
+
+        ctx.moveTo(0, waveY + Math.sin(speed) * amplitude);
+        for (let x = 0; x <= cw; x += 4) {
+          const y = waveY
+            + Math.sin(x * frequency + speed + wave) * amplitude
+            + Math.sin(x * frequency * 2.3 + speed * 1.5) * amplitude * 0.3;
+          ctx.lineTo(x, y);
+        }
+
+        const waveAlpha = 0.03 + wave * 0.01;
+        ctx.strokeStyle = `rgba(59, 130, 246, ${waveAlpha})`;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+      ctx.globalCompositeOperation = 'source-over';
+
+      // Vignette overlay for depth
+      const vignetteGrad = ctx.createRadialGradient(
+        cw / 2, ch / 2, Math.min(cw, ch) * 0.2,
+        cw / 2, ch / 2, Math.max(cw, ch) * 0.8
+      );
+      vignetteGrad.addColorStop(0, 'rgba(2, 6, 23, 0)');
+      vignetteGrad.addColorStop(0.6, 'rgba(2, 6, 23, 0.1)');
+      vignetteGrad.addColorStop(1, 'rgba(2, 6, 23, 0.5)');
+      ctx.fillStyle = vignetteGrad;
+      ctx.fillRect(0, 0, cw, ch);
+
+      // Top and bottom fade for seamless section blending
+      const topFade = ctx.createLinearGradient(0, 0, 0, ch * 0.15);
+      topFade.addColorStop(0, 'rgba(10, 10, 26, 0.6)');
+      topFade.addColorStop(1, 'rgba(10, 10, 26, 0)');
+      ctx.fillStyle = topFade;
+      ctx.fillRect(0, 0, cw, ch * 0.15);
+
+      const bottomFade = ctx.createLinearGradient(0, ch * 0.85, 0, ch);
+      bottomFade.addColorStop(0, 'rgba(10, 10, 26, 0)');
+      bottomFade.addColorStop(1, 'rgba(10, 10, 26, 0.8)');
+      ctx.fillStyle = bottomFade;
+      ctx.fillRect(0, ch * 0.85, cw, ch * 0.15);
 
       animationRef.current = requestAnimationFrame(animate);
     };
