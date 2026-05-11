@@ -69,7 +69,7 @@ export default function ExperienceSection() {
   const isInView = useInView(timelineRef, { once: true, margin: '-100px' });
 
   return (
-    <SectionWrapper id="experience">
+    <SectionWrapper id="experience" backgroundVariant="data-stream">
       <div className="text-center mb-16">
         <motion.p
           initial={{ opacity: 0 }}

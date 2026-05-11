@@ -37,7 +37,7 @@ export default function AboutSection() {
   const isInView = useInView(highlightsRef, { once: true, margin: '-50px' });
 
   return (
-    <SectionWrapper id="about">
+    <SectionWrapper id="about" backgroundVariant="constellation">
       <div className="text-center mb-16">
         <motion.p
           initial={{ opacity: 0 }}

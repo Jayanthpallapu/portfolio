@@ -87,7 +87,7 @@ export default function ContactSection() {
   };
 
   return (
-    <SectionWrapper id="contact">
+    <SectionWrapper id="contact" backgroundVariant="aurora">
       <div className="text-center mb-16">
         <motion.p
           initial={{ opacity: 0 }}

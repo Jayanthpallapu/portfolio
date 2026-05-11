@@ -254,3 +254,50 @@
   background-size: 200% 200%;
   animation: gradient-flow 4s ease infinite;
 }
+
+/* Section transition dividers */
+section {
+  position: relative;
+}
+
+/* Enhanced glass for animated backgrounds */
+.glass {
+  background: rgba(10, 10, 26, 0.55);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-strong {
+  background: rgba(10, 10, 26, 0.7);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Section glow dividers */
+.section-divider {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), rgba(129, 140, 248, 0.15), rgba(56, 189, 248, 0.2), transparent);
+}
+
+/* Smooth section content transition */
+.section-content {
+  position: relative;
+  z-index: 10;
+}
+
+/* Ambient light effect for section headers */
+@keyframes section-header-glow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+.section-header-glow {
+  animation: section-header-glow 4s ease-in-out infinite;
+}

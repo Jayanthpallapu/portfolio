@@ -55,7 +55,7 @@ export default function ProjectsSection() {
   const isInView = useInView(gridRef, { once: true, margin: '-50px' });
 
   return (
-    <SectionWrapper id="projects">
+    <SectionWrapper id="projects" backgroundVariant="circuit">
       <div className="text-center mb-16">
         <motion.p
           initial={{ opacity: 0 }}

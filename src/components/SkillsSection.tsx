@@ -104,7 +104,7 @@ export default function SkillsSection() {
   const activeSkills = skillCategories.find((c) => c.title === activeCategory);
 
   return (
-    <SectionWrapper id="skills">
+    <SectionWrapper id="skills" backgroundVariant="neural">
       <div className="text-center mb-16">
         <motion.p
           initial={{ opacity: 0 }}

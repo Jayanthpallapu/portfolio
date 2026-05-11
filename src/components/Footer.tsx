@@ -11,11 +11,22 @@ const socialLinks = [
 
 export default function Footer() {
   return (
-    <footer className="relative border-t border-[#3b82f6]/10">
+    <footer className="relative border-t border-[#3b82f6]/10 overflow-hidden">
+      {/* Subtle gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#050510] via-[#0a0a1a] to-[#0a0a1a]" />
+
       {/* Glow line at top */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-[#3b82f6]/40 to-transparent" />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Subtle aurora remnant at bottom */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-32 opacity-20"
+        style={{
+          background: 'radial-gradient(ellipse 80% 100% at 50% 100%, rgba(129, 140, 248, 0.15) 0%, rgba(56, 189, 248, 0.05) 40%, transparent 70%)',
+        }}
+      />
+
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Copyright */}
           <div className="flex items-center gap-1 text-sm text-gray-500">
