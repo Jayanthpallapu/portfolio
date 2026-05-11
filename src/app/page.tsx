@@ -8,8 +8,12 @@ import ProjectsSection from '@/components/ProjectsSection';
 import SkillsSection from '@/components/SkillsSection';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
+import { useVisitorTracking } from '@/hooks/use-visitor-tracking';
 
 export default function Home() {
+  // Track visitor analytics
+  useVisitorTracking();
+
   return (
     <div className="min-h-screen flex flex-col bg-[#0a0a1a] text-foreground">
       <Navigation />

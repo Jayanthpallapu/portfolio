@@ -1,0 +1,7 @@
+{
+  "name": "portfolio-api",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "/home/z/.venv/bin/python3 -m uvicorn index:app --host 0.0.0.0 --port 8000 --reload"
+  }
+}

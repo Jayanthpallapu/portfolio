@@ -2,8 +2,9 @@
 
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { Send, Github, Linkedin, Mail, MapPin, Phone, CheckCircle } from 'lucide-react';
+import { Send, Github, Linkedin, Mail, MapPin, Phone, CheckCircle, AlertCircle } from 'lucide-react';
 import SectionWrapper from './SectionWrapper';
+import { submitContact } from '@/lib/api';
 
 const contactInfo = [
   {
@@ -50,22 +51,39 @@ const socialLinks = [
   },
 ];
 
+type FormStatus = 'idle' | 'submitting' | 'success' | 'error';
+
 export default function ContactSection() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [status, setStatus] = useState<FormStatus>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setStatus('submitting');
+    setErrorMessage('');
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    setFormData({ name: '', email: '', message: '' });
+    try {
+      const result = await submitContact({
+        name: formData.name,
+        email: formData.email,
+        message: formData.message,
+        source: 'portfolio_website',
+      });
 
-    setTimeout(() => setIsSubmitted(false), 4000);
+      if (result.success) {
+        setStatus('success');
+        setFormData({ name: '', email: '', message: '' });
+        setTimeout(() => setStatus('idle'), 4000);
+      } else {
+        setStatus('error');
+        setErrorMessage(result.message || 'Something went wrong.');
+      }
+    } catch (err: unknown) {
+      setStatus('error');
+      setErrorMessage(err instanceof Error ? err.message : 'Failed to send message. Please try again.');
+      setTimeout(() => setStatus('idle'), 5000);
+    }
   };
 
   return (
@@ -170,6 +188,7 @@ export default function ContactSection() {
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#00d4ff]/50 focus:ring-1 focus:ring-[#00d4ff]/20 transition-all text-sm"
                   placeholder="John Doe"
+                  disabled={status === 'submitting'}
                 />
               </div>
               <div className="space-y-2">
@@ -184,6 +203,7 @@ export default function ContactSection() {
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#00d4ff]/50 focus:ring-1 focus:ring-[#00d4ff]/20 transition-all text-sm"
                   placeholder="john@example.com"
+                  disabled={status === 'submitting'}
                 />
               </div>
             </div>
@@ -199,23 +219,36 @@ export default function ContactSection() {
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#00d4ff]/50 focus:ring-1 focus:ring-[#00d4ff]/20 transition-all text-sm resize-none"
                 placeholder="Tell me about your project..."
+                disabled={status === 'submitting'}
               />
             </div>
 
+            {/* Error Message */}
+            {status === 'error' && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-2 text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3"
+              >
+                <AlertCircle size={16} />
+                {errorMessage}
+              </motion.div>
+            )}
+
             <motion.button
               type="submit"
-              disabled={isSubmitting}
+              disabled={status === 'submitting'}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="w-full py-3.5 rounded-xl bg-[#00d4ff] text-[#0a0a1a] font-semibold flex items-center justify-center gap-2 hover:bg-[#00e5ff] transition-all duration-300 glow-blue disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? (
+              {status === 'submitting' ? (
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                   className="w-5 h-5 border-2 border-[#0a0a1a]/30 border-t-[#0a0a1a] rounded-full"
                 />
-              ) : isSubmitted ? (
+              ) : status === 'success' ? (
                 <>
                   <CheckCircle size={18} />
                   Message Sent!
