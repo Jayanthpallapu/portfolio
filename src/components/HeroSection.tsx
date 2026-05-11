@@ -13,16 +13,6 @@ export default function HeroSection() {
       {/* Liquid Blue Flow Background */}
       <ParticleBackground />
 
-      {/* Subtle grid overlay for depth */}
-      <div
-        className="absolute inset-0 z-[1] opacity-[0.03]"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(59,130,246,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.3) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
-        }}
-      />
-
       {/* Content */}
       <div className="relative z-10 text-center px-4 sm:px-6 max-w-4xl mx-auto">
         {/* Profile Image */}

@@ -3,14 +3,14 @@
 import { useEffect, useRef } from 'react';
 
 /**
- * Animated Section Backgrounds
- * Each section gets a unique, mesmerizing canvas animation:
+ * Animated Section Backgrounds — Dots Only, No Lines
+ * Each section has uniquely animated dot particles:
  *
- * 1. "constellation" — About: Floating connected dots forming a constellation network
- * 2. "data-stream" — Experience: Flowing vertical light streams with pulses
- * 3. "circuit" — Projects: Electric circuit-board with traveling pulses
- * 4. "neural" — Skills: Neural network nodes with pulsing connections
- * 5. "aurora" — Contact: Aurora borealis flowing waves
+ * 1. "constellation" — About: Floating wandering dots with proximity glow
+ * 2. "data-stream" — Experience: Falling/rising dot particles with trails
+ * 3. "circuit" — Projects: Grid-aligned pulsing dots with random energy sparks
+ * 4. "neural" — Skills: Layered oscillating dots with orbiting sparks
+ * 5. "aurora" — Contact: Drifting luminous dots with breath-sync
  */
 
 export type BackgroundVariant = 'constellation' | 'data-stream' | 'circuit' | 'neural' | 'aurora';
@@ -19,8 +19,52 @@ interface SectionBackgroundProps {
   variant: BackgroundVariant;
 }
 
+// ==================== SHARED HELPERS ====================
+const hexToRgb = (hex: string) => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) }
+    : { r: 0, g: 100, b: 255 };
+};
+
+function drawGlowDot(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  radius: number,
+  r: number,
+  g: number,
+  b: number,
+  alpha: number,
+  glowMultiplier: number = 4
+) {
+  // Outer glow
+  const grad = ctx.createRadialGradient(x, y, 0, x, y, radius * glowMultiplier);
+  grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${alpha * 0.5})`);
+  grad.addColorStop(0.4, `rgba(${r}, ${g}, ${b}, ${alpha * 0.15})`);
+  grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
+  ctx.beginPath();
+  ctx.arc(x, y, radius * glowMultiplier, 0, Math.PI * 2);
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Core dot
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  ctx.fill();
+
+  // Bright center
+  if (radius > 1.5) {
+    ctx.beginPath();
+    ctx.arc(x, y, radius * 0.4, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${Math.min(r + 80, 255)}, ${Math.min(g + 80, 255)}, ${Math.min(b + 60, 255)}, ${alpha * 0.8})`;
+    ctx.fill();
+  }
+}
+
 // ==================== CONSTELLATION (About) ====================
-interface ConstellationNode {
+interface Dot {
   x: number;
   y: number;
   vx: number;
@@ -29,116 +73,108 @@ interface ConstellationNode {
   baseAlpha: number;
   pulsePhase: number;
   pulseSpeed: number;
+  color: { r: number; g: number; b: number };
+  orbitRadius: number;
+  orbitSpeed: number;
+  orbitPhase: number;
+  baseX: number;
+  baseY: number;
 }
 
-function drawConstellation(canvas: HTMLCanvasElement, nodes: ConstellationNode[], time: number) {
+function initDots(w: number, h: number, count: number, colors: { r: number; g: number; b: number }[]): Dot[] {
+  const dots: Dot[] = [];
+  for (let i = 0; i < count; i++) {
+    const x = Math.random() * w;
+    const y = Math.random() * h;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    dots.push({
+      x, y,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      radius: 1.5 + Math.random() * 3,
+      baseAlpha: 0.25 + Math.random() * 0.5,
+      pulsePhase: Math.random() * Math.PI * 2,
+      pulseSpeed: 0.001 + Math.random() * 0.003,
+      color,
+      orbitRadius: Math.random() < 0.3 ? 5 + Math.random() * 20 : 0,
+      orbitSpeed: 0.001 + Math.random() * 0.003,
+      orbitPhase: Math.random() * Math.PI * 2,
+      baseX: x,
+      baseY: y,
+    });
+  }
+  return dots;
+}
+
+function drawConstellation(canvas: HTMLCanvasElement, dots: Dot[], time: number) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
   const w = canvas.width;
   const h = canvas.height;
 
-  // Clear with dark base
   ctx.fillStyle = '#0a0a1a';
   ctx.fillRect(0, 0, w, h);
 
-  // Move nodes
-  for (const node of nodes) {
-    node.x += node.vx;
-    node.y += node.vy;
-    if (node.x < 0 || node.x > w) node.vx *= -1;
-    if (node.y < 0 || node.y > h) node.vy *= -1;
-    node.x = Math.max(0, Math.min(w, node.x));
-    node.y = Math.max(0, Math.min(h, node.y));
-  }
+  for (const dot of dots) {
+    // Move freely
+    dot.x += dot.vx;
+    dot.y += dot.vy;
+    if (dot.x < -20) dot.x = w + 20;
+    if (dot.x > w + 20) dot.x = -20;
+    if (dot.y < -20) dot.y = h + 20;
+    if (dot.y > h + 20) dot.y = -20;
 
-  // Draw connections
-  const maxDist = 150;
-  ctx.lineWidth = 0.5;
-  for (let i = 0; i < nodes.length; i++) {
-    for (let j = i + 1; j < nodes.length; j++) {
-      const dx = nodes[i].x - nodes[j].x;
-      const dy = nodes[i].y - nodes[j].y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < maxDist) {
-        const alpha = (1 - dist / maxDist) * 0.15;
-        ctx.beginPath();
-        ctx.moveTo(nodes[i].x, nodes[i].y);
-        ctx.lineTo(nodes[j].x, nodes[j].y);
-        ctx.strokeStyle = `rgba(129, 140, 248, ${alpha})`;
-        ctx.stroke();
+    // Add orbit wobble for some dots
+    let drawX = dot.x;
+    let drawY = dot.y;
+    if (dot.orbitRadius > 0) {
+      drawX += Math.sin(time * dot.orbitSpeed + dot.orbitPhase) * dot.orbitRadius;
+      drawY += Math.cos(time * dot.orbitSpeed * 0.7 + dot.orbitPhase) * dot.orbitRadius * 0.6;
+    }
+
+    // Animated pulse
+    const pulse = 1 + 0.5 * Math.sin(time * dot.pulseSpeed + dot.pulsePhase);
+    const alpha = dot.baseAlpha * pulse;
+    const r = dot.radius * (0.8 + 0.4 * Math.sin(time * dot.pulseSpeed * 1.5 + dot.pulsePhase));
+
+    // Proximity glow — brighter when near other dots
+    let proximityBoost = 0;
+    for (const other of dots) {
+      if (other === dot) continue;
+      const dx = drawX - other.x;
+      const dy = drawY - other.y;
+      const dist = dx * dx + dy * dy;
+      if (dist < 22500) { // 150px squared
+        proximityBoost += (1 - Math.sqrt(dist) / 150) * 0.15;
       }
     }
+
+    drawGlowDot(
+      ctx, drawX, drawY,
+      Math.max(r, 0.5),
+      dot.color.r, dot.color.g, dot.color.b,
+      Math.min(alpha + proximityBoost, 1),
+      4
+    );
   }
-
-  // Draw nodes
-  for (const node of nodes) {
-    const pulse = 1 + 0.3 * Math.sin(time * node.pulseSpeed + node.pulsePhase);
-    const alpha = node.baseAlpha * pulse;
-
-    // Glow
-    const grad = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, node.radius * 4);
-    grad.addColorStop(0, `rgba(129, 140, 248, ${alpha * 0.4})`);
-    grad.addColorStop(1, 'rgba(129, 140, 248, 0)');
-    ctx.beginPath();
-    ctx.arc(node.x, node.y, node.radius * 4, 0, Math.PI * 2);
-    ctx.fillStyle = grad;
-    ctx.fill();
-
-    // Core
-    ctx.beginPath();
-    ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(129, 140, 248, ${alpha})`;
-    ctx.fill();
-  }
-
-  // Subtle wave line across
-  ctx.globalCompositeOperation = 'screen';
-  for (let wv = 0; wv < 2; wv++) {
-    ctx.beginPath();
-    const waveY = h * (0.35 + wv * 0.3);
-    for (let x = 0; x <= w; x += 3) {
-      const y = waveY + Math.sin(x * 0.005 + time * 0.0008 + wv) * 20
-                      + Math.sin(x * 0.01 + time * 0.0015) * 10;
-      if (x === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.strokeStyle = `rgba(129, 140, 248, 0.04)`;
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-  }
-  ctx.globalCompositeOperation = 'source-over';
 }
 
 // ==================== DATA STREAM (Experience) ====================
-interface DataStream {
+interface StreamDot {
   x: number;
   y: number;
   speed: number;
-  length: number;
-  alpha: number;
-  width: number;
+  radius: number;
+  baseAlpha: number;
   color: { r: number; g: number; b: number };
   pulsePhase: number;
-  pulseInterval: number;
-  nextPulse: number;
+  pulseSpeed: number;
+  drift: number;
+  driftSpeed: number;
+  trail: { x: number; y: number; alpha: number }[];
 }
 
-interface DataPulse {
-  x: number;
-  y: number;
-  speed: number;
-  size: number;
-  alpha: number;
-  color: { r: number; g: number; b: number };
-  life: number;
-}
-
-function drawDataStream(
-  canvas: HTMLCanvasElement,
-  streams: DataStream[],
-  pulses: DataPulse[],
-  time: number
-) {
+function drawDataStream(canvas: HTMLCanvasElement, dots: StreamDot[], time: number) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
   const w = canvas.width;
@@ -147,111 +183,70 @@ function drawDataStream(
   ctx.fillStyle = '#0a0a1a';
   ctx.fillRect(0, 0, w, h);
 
-  // Update & draw streams
-  for (const stream of streams) {
-    stream.y += stream.speed;
-    if (stream.y - stream.length > h) {
-      stream.y = -stream.length;
-      stream.x = Math.random() * w;
+  for (const dot of dots) {
+    // Fall downward
+    dot.y += dot.speed;
+    dot.x += Math.sin(time * dot.driftSpeed + dot.pulsePhase) * dot.drift;
+
+    if (dot.y > h + 20) {
+      dot.y = -20;
+      dot.x = Math.random() * w;
+      dot.trail = [];
     }
 
-    // Gradient stream line
-    const grad = ctx.createLinearGradient(stream.x, stream.y - stream.length, stream.x, stream.y);
-    grad.addColorStop(0, `rgba(${stream.color.r}, ${stream.color.g}, ${stream.color.b}, 0)`);
-    grad.addColorStop(0.5, `rgba(${stream.color.r}, ${stream.color.g}, ${stream.color.b}, ${stream.alpha})`);
-    grad.addColorStop(1, `rgba(${stream.color.r}, ${stream.color.g}, ${stream.color.b}, 0)`);
+    // Update trail
+    dot.trail.push({ x: dot.x, y: dot.y, alpha: dot.baseAlpha * 0.4 });
+    if (dot.trail.length > 8) dot.trail.shift();
 
-    ctx.beginPath();
-    ctx.moveTo(stream.x, stream.y - stream.length);
-    ctx.lineTo(stream.x, stream.y);
-    ctx.strokeStyle = grad;
-    ctx.lineWidth = stream.width;
-    ctx.stroke();
-
-    // Spawn pulse
-    if (time > stream.nextPulse) {
-      pulses.push({
-        x: stream.x,
-        y: stream.y,
-        speed: stream.speed * 2,
-        size: 3,
-        alpha: 0.8,
-        color: stream.color,
-        life: 60,
-      });
-      stream.nextPulse = time + stream.pulseInterval + Math.random() * 3000;
+    // Draw trail (fading dots, no lines)
+    for (let i = 0; i < dot.trail.length; i++) {
+      const t = dot.trail[i];
+      const trailAlpha = t.alpha * (i / dot.trail.length) * 0.5;
+      const trailR = dot.radius * (0.3 + 0.7 * (i / dot.trail.length));
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, Math.max(trailR, 0.3), 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${dot.color.r}, ${dot.color.g}, ${dot.color.b}, ${trailAlpha})`;
+      ctx.fill();
     }
+
+    // Animated pulse
+    const pulse = 1 + 0.4 * Math.sin(time * dot.pulseSpeed + dot.pulsePhase);
+    const alpha = dot.baseAlpha * pulse;
+
+    drawGlowDot(ctx, dot.x, dot.y, dot.radius, dot.color.r, dot.color.g, dot.color.b, alpha, 5);
   }
-
-  // Update & draw pulses
-  for (let i = pulses.length - 1; i >= 0; i--) {
-    const pulse = pulses[i];
-    pulse.y += pulse.speed;
-    pulse.life--;
-    pulse.alpha *= 0.97;
-
-    if (pulse.life <= 0 || pulse.y > h) {
-      pulses.splice(i, 1);
-      continue;
-    }
-
-    const grad = ctx.createRadialGradient(pulse.x, pulse.y, 0, pulse.x, pulse.y, pulse.size * 6);
-    grad.addColorStop(0, `rgba(${pulse.color.r}, ${pulse.color.g}, ${pulse.color.b}, ${pulse.alpha})`);
-    grad.addColorStop(0.4, `rgba(${pulse.color.r}, ${pulse.color.g}, ${pulse.color.b}, ${pulse.alpha * 0.3})`);
-    grad.addColorStop(1, `rgba(${pulse.color.r}, ${pulse.color.g}, ${pulse.color.b}, 0)`);
-
-    ctx.beginPath();
-    ctx.arc(pulse.x, pulse.y, pulse.size * 6, 0, Math.PI * 2);
-    ctx.fillStyle = grad;
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.arc(pulse.x, pulse.y, pulse.size, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(${Math.min(pulse.color.r + 60, 255)}, ${Math.min(pulse.color.g + 60, 255)}, ${Math.min(pulse.color.b + 40, 255)}, ${pulse.alpha})`;
-    ctx.fill();
-  }
-
-  // Horizontal data flow lines
-  ctx.globalCompositeOperation = 'screen';
-  for (let i = 0; i < 3; i++) {
-    const lineY = h * (0.25 + i * 0.25);
-    const offset = time * 0.0005 * (i % 2 === 0 ? 1 : -1);
-    ctx.beginPath();
-    for (let x = 0; x <= w; x += 4) {
-      const y = lineY + Math.sin(x * 0.008 + offset + i * 2) * 8;
-      if (x === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.strokeStyle = `rgba(6, 182, 212, 0.03)`;
-    ctx.lineWidth = 1;
-    ctx.stroke();
-  }
-  ctx.globalCompositeOperation = 'source-over';
 }
 
 // ==================== CIRCUIT (Projects) ====================
-interface CircuitNode {
+interface CircuitDot {
   x: number;
   y: number;
-  connections: number[];
+  baseRadius: number;
+  baseAlpha: number;
   pulsePhase: number;
   pulseSpeed: number;
-  glowAlpha: number;
+  color: { r: number; g: number; b: number };
+  ringPhase: number;
+  ringSpeed: number;
+  ringMaxRadius: number;
 }
 
-interface CircuitPulse {
-  fromNode: number;
-  toNode: number;
-  progress: number;
-  speed: number;
+interface SparkDot {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  radius: number;
+  alpha: number;
   color: { r: number; g: number; b: number };
-  size: number;
+  life: number;
+  maxLife: number;
 }
 
 function drawCircuit(
   canvas: HTMLCanvasElement,
-  circuitNodes: CircuitNode[],
-  circuitPulses: CircuitPulse[],
+  dots: CircuitDot[],
+  sparks: SparkDot[],
   time: number
 ) {
   const ctx = canvas.getContext('2d');
@@ -262,151 +257,86 @@ function drawCircuit(
   ctx.fillStyle = '#0a0a1a';
   ctx.fillRect(0, 0, w, h);
 
-  // Draw connections (lines between nodes)
-  const drawnPairs = new Set<string>();
-  for (let i = 0; i < circuitNodes.length; i++) {
-    const node = circuitNodes[i];
-    for (const j of node.connections) {
-      const pairKey = `${Math.min(i, j)}-${Math.max(i, j)}`;
-      if (drawnPairs.has(pairKey)) continue;
-      drawnPairs.add(pairKey);
+  // Draw static dots with expanding ring animation
+  for (const dot of dots) {
+    const pulse = 1 + 0.5 * Math.sin(time * dot.pulseSpeed + dot.pulsePhase);
+    const alpha = dot.baseAlpha * pulse;
+    const r = dot.baseRadius * pulse;
 
-      const other = circuitNodes[j];
-      if (!other) continue;
+    drawGlowDot(ctx, dot.x, dot.y, Math.max(r, 0.5), dot.color.r, dot.color.g, dot.color.b, alpha, 4);
 
+    // Expanding ripple dots (instead of ring stroke)
+    const ringProgress = ((time * dot.ringSpeed + dot.ringPhase) % 1);
+    const ringRadius = dot.baseRadius + ringProgress * dot.ringMaxRadius;
+    const ringAlpha = (1 - ringProgress) * 0.2;
+    const rippleDotCount = 8;
+    for (let d = 0; d < rippleDotCount; d++) {
+      const angle = (d / rippleDotCount) * Math.PI * 2 + time * 0.001;
+      const rx = dot.x + Math.cos(angle) * ringRadius;
+      const ry = dot.y + Math.sin(angle) * ringRadius;
       ctx.beginPath();
-      // Draw L-shaped connections (circuit board style)
-      const midX = other.x;
-      ctx.moveTo(node.x, node.y);
-      ctx.lineTo(midX, node.y);
-      ctx.lineTo(midX, other.y);
-      ctx.strokeStyle = 'rgba(6, 182, 212, 0.08)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-
-      // Small dot at corner
-      ctx.beginPath();
-      ctx.arc(midX, node.y, 1.5, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(6, 182, 212, 0.15)';
+      ctx.arc(rx, ry, Math.max(0.8, 0.8), 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${dot.color.r}, ${dot.color.g}, ${dot.color.b}, ${ringAlpha})`;
       ctx.fill();
     }
   }
 
-  // Draw & update pulses
-  for (let i = circuitPulses.length - 1; i >= 0; i--) {
-    const pulse = circuitPulses[i];
-    pulse.progress += pulse.speed;
-    if (pulse.progress >= 1) {
-      // Restart with new random path
-      const fromIdx = Math.floor(Math.random() * circuitNodes.length);
-      const from = circuitNodes[fromIdx];
-      if (from.connections.length > 0) {
-        const toIdx = from.connections[Math.floor(Math.random() * from.connections.length)];
-        pulse.fromNode = fromIdx;
-        pulse.toNode = toIdx;
-        pulse.progress = 0;
-        const colors = [
-          { r: 6, g: 182, b: 212 },
-          { r: 59, b: 246, g: 130 },
-          { r: 56, g: 189, b: 248 },
-        ];
-        pulse.color = colors[Math.floor(Math.random() * colors.length)];
-      } else {
-        circuitPulses.splice(i, 1);
-      }
+  // Update & draw sparks
+  for (let i = sparks.length - 1; i >= 0; i--) {
+    const spark = sparks[i];
+    spark.x += spark.vx;
+    spark.y += spark.vy;
+    spark.vx *= 0.98;
+    spark.vy *= 0.98;
+    spark.life--;
+    spark.alpha = (spark.life / spark.maxLife) * 0.8;
+
+    if (spark.life <= 0) {
+      // Respawn from a random dot
+      const parentDot = dots[Math.floor(Math.random() * dots.length)];
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 0.5 + Math.random() * 1.5;
+      spark.x = parentDot.x;
+      spark.y = parentDot.y;
+      spark.vx = Math.cos(angle) * speed;
+      spark.vy = Math.sin(angle) * speed;
+      spark.life = 40 + Math.floor(Math.random() * 60);
+      spark.maxLife = spark.life;
+      spark.color = parentDot.color;
       continue;
     }
 
-    const from = circuitNodes[pulse.fromNode];
-    const to = circuitNodes[pulse.toNode];
-    if (!from || !to) continue;
-
-    // Interpolate position along L-path
-    let px: number, py: number;
-    if (pulse.progress < 0.5) {
-      // First segment: from → corner
-      const t = pulse.progress * 2;
-      px = from.x + (to.x - from.x) * t;
-      py = from.y;
-    } else {
-      // Second segment: corner → to
-      const t = (pulse.progress - 0.5) * 2;
-      px = to.x;
-      py = from.y + (to.y - from.y) * t;
-    }
-
-    const pulseAlpha = Math.sin(pulse.progress * Math.PI) * 0.9;
-
-    const grad = ctx.createRadialGradient(px, py, 0, px, py, pulse.size * 5);
-    grad.addColorStop(0, `rgba(${pulse.color.r}, ${pulse.color.g}, ${pulse.color.b}, ${pulseAlpha})`);
-    grad.addColorStop(0.3, `rgba(${pulse.color.r}, ${pulse.color.g}, ${pulse.color.b}, ${pulseAlpha * 0.4})`);
-    grad.addColorStop(1, `rgba(${pulse.color.r}, ${pulse.color.g}, ${pulse.color.b}, 0)`);
-
-    ctx.beginPath();
-    ctx.arc(px, py, pulse.size * 5, 0, Math.PI * 2);
-    ctx.fillStyle = grad;
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.arc(px, py, pulse.size, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(${Math.min(pulse.color.r + 80, 255)}, ${Math.min(pulse.color.g + 80, 255)}, ${Math.min(pulse.color.b + 80, 255)}, ${pulseAlpha})`;
-    ctx.fill();
-  }
-
-  // Draw nodes
-  for (const node of circuitNodes) {
-    const pulse = 1 + 0.3 * Math.sin(time * node.pulseSpeed + node.pulsePhase);
-
-    // Node glow
-    const grad = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, 12);
-    grad.addColorStop(0, `rgba(6, 182, 212, ${0.15 * pulse})`);
-    grad.addColorStop(1, 'rgba(6, 182, 212, 0)');
-    ctx.beginPath();
-    ctx.arc(node.x, node.y, 12, 0, Math.PI * 2);
-    ctx.fillStyle = grad;
-    ctx.fill();
-
-    // Node core
-    ctx.beginPath();
-    ctx.arc(node.x, node.y, 2.5, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(6, 182, 212, ${0.3 * pulse})`;
-    ctx.fill();
-
-    // Node ring
-    ctx.beginPath();
-    ctx.arc(node.x, node.y, 5, 0, Math.PI * 2);
-    ctx.strokeStyle = `rgba(6, 182, 212, ${0.1 * pulse})`;
-    ctx.lineWidth = 0.5;
-    ctx.stroke();
+    drawGlowDot(ctx, spark.x, spark.y, Math.max(spark.radius, 0.3), spark.color.r, spark.color.g, spark.color.b, spark.alpha, 3);
   }
 }
 
 // ==================== NEURAL (Skills) ====================
-interface NeuralNode {
+interface NeuralDot {
   x: number;
   y: number;
   baseX: number;
   baseY: number;
   radius: number;
+  baseAlpha: number;
   pulsePhase: number;
   pulseSpeed: number;
-  layer: number;
-  connections: number[];
+  color: { r: number; g: number; b: number };
+  oscillateAmplitude: number;
+  oscillateSpeedX: number;
+  oscillateSpeedY: number;
+  orbitDots: OrbitSpark[];
 }
 
-interface NeuralPulse {
-  fromNode: number;
-  toNode: number;
-  progress: number;
+interface OrbitSpark {
+  angle: number;
   speed: number;
+  radius: number;
+  distance: number;
+  alpha: number;
+  color: { r: number; g: number; b: number };
 }
 
-function drawNeural(
-  canvas: HTMLCanvasElement,
-  neuralNodes: NeuralNode[],
-  neuralPulses: NeuralPulse[],
-  time: number
-) {
+function drawNeural(canvas: HTMLCanvasElement, dots: NeuralDot[], time: number) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
   const w = canvas.width;
@@ -415,125 +345,61 @@ function drawNeural(
   ctx.fillStyle = '#0a0a1a';
   ctx.fillRect(0, 0, w, h);
 
-  // Gentle node oscillation
-  for (const node of neuralNodes) {
-    node.x = node.baseX + Math.sin(time * 0.0005 + node.pulsePhase) * 8;
-    node.y = node.baseY + Math.cos(time * 0.0004 + node.pulsePhase * 1.3) * 6;
-  }
+  for (const dot of dots) {
+    // Oscillate position
+    dot.x = dot.baseX + Math.sin(time * dot.oscillateSpeedX + dot.pulsePhase) * dot.oscillateAmplitude;
+    dot.y = dot.baseY + Math.cos(time * dot.oscillateSpeedY + dot.pulsePhase * 1.3) * dot.oscillateAmplitude * 0.7;
 
-  // Draw connections
-  const drawnPairs = new Set<string>();
-  for (let i = 0; i < neuralNodes.length; i++) {
-    const node = neuralNodes[i];
-    for (const j of node.connections) {
-      const pairKey = `${Math.min(i, j)}-${Math.max(i, j)}`;
-      if (drawnPairs.has(pairKey)) continue;
-      drawnPairs.add(pairKey);
+    const pulse = 1 + 0.6 * Math.sin(time * dot.pulseSpeed + dot.pulsePhase);
+    const alpha = dot.baseAlpha * pulse;
+    const r = dot.radius * (0.7 + 0.5 * Math.sin(time * dot.pulseSpeed * 1.2 + dot.pulsePhase));
 
-      const other = neuralNodes[j];
-      if (!other) continue;
+    drawGlowDot(ctx, dot.x, dot.y, Math.max(r, 0.5), dot.color.r, dot.color.g, dot.color.b, alpha, 4);
 
-      // Bezier curve connection
-      const midX = (node.x + other.x) / 2;
-      const midY = (node.y + other.y) / 2 - 20;
+    // Draw orbiting sparks
+    for (const orbit of dot.orbitDots) {
+      orbit.angle += orbit.speed;
+      const ox = dot.x + Math.cos(orbit.angle) * orbit.distance;
+      const oy = dot.y + Math.sin(orbit.angle) * orbit.distance;
+      const oAlpha = orbit.alpha * pulse;
+
       ctx.beginPath();
-      ctx.moveTo(node.x, node.y);
-      ctx.quadraticCurveTo(midX, midY, other.x, other.y);
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.06)';
-      ctx.lineWidth = 0.8;
-      ctx.stroke();
+      ctx.arc(ox, oy, Math.max(orbit.radius, 0.3), 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${orbit.color.r}, ${orbit.color.g}, ${orbit.color.b}, ${oAlpha})`;
+      ctx.fill();
+
+      // Tiny glow
+      const oGrad = ctx.createRadialGradient(ox, oy, 0, ox, oy, orbit.radius * 4);
+      oGrad.addColorStop(0, `rgba(${orbit.color.r}, ${orbit.color.g}, ${orbit.color.b}, ${oAlpha * 0.3})`);
+      oGrad.addColorStop(1, `rgba(${orbit.color.r}, ${orbit.color.g}, ${orbit.color.b}, 0)`);
+      ctx.beginPath();
+      ctx.arc(ox, oy, orbit.radius * 4, 0, Math.PI * 2);
+      ctx.fillStyle = oGrad;
+      ctx.fill();
     }
-  }
-
-  // Update & draw pulses along connections
-  for (let i = neuralPulses.length - 1; i >= 0; i--) {
-    const pulse = neuralPulses[i];
-    pulse.progress += pulse.speed;
-    if (pulse.progress >= 1) {
-      // Re-spawn
-      const fromIdx = Math.floor(Math.random() * neuralNodes.length);
-      const from = neuralNodes[fromIdx];
-      if (from.connections.length > 0) {
-        const toIdx = from.connections[Math.floor(Math.random() * from.connections.length)];
-        pulse.fromNode = fromIdx;
-        pulse.toNode = toIdx;
-        pulse.progress = 0;
-      } else {
-        neuralPulses.splice(i, 1);
-      }
-      continue;
-    }
-
-    const from = neuralNodes[pulse.fromNode];
-    const to = neuralNodes[pulse.toNode];
-    if (!from || !to) continue;
-
-    const t = pulse.progress;
-    const midX = (from.x + to.x) / 2;
-    const midY = (from.y + to.y) / 2 - 20;
-
-    // Quadratic bezier interpolation
-    const px = (1 - t) * (1 - t) * from.x + 2 * (1 - t) * t * midX + t * t * to.x;
-    const py = (1 - t) * (1 - t) * from.y + 2 * (1 - t) * t * midY + t * t * to.y;
-
-    const alpha = Math.sin(t * Math.PI) * 0.7;
-
-    const grad = ctx.createRadialGradient(px, py, 0, px, py, 10);
-    grad.addColorStop(0, `rgba(56, 189, 248, ${alpha})`);
-    grad.addColorStop(0.5, `rgba(56, 189, 248, ${alpha * 0.3})`);
-    grad.addColorStop(1, 'rgba(56, 189, 248, 0)');
-
-    ctx.beginPath();
-    ctx.arc(px, py, 10, 0, Math.PI * 2);
-    ctx.fillStyle = grad;
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.arc(px, py, 2, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(130, 220, 255, ${alpha})`;
-    ctx.fill();
-  }
-
-  // Draw nodes
-  for (const node of neuralNodes) {
-    const pulse = 1 + 0.4 * Math.sin(time * node.pulseSpeed + node.pulsePhase);
-
-    // Outer glow
-    const grad = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, node.radius * 3);
-    grad.addColorStop(0, `rgba(56, 189, 248, ${0.08 * pulse})`);
-    grad.addColorStop(1, 'rgba(56, 189, 248, 0)');
-    ctx.beginPath();
-    ctx.arc(node.x, node.y, node.radius * 3, 0, Math.PI * 2);
-    ctx.fillStyle = grad;
-    ctx.fill();
-
-    // Core
-    ctx.beginPath();
-    ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(56, 189, 248, ${0.2 * pulse})`;
-    ctx.fill();
-
-    // Bright center
-    ctx.beginPath();
-    ctx.arc(node.x, node.y, node.radius * 0.4, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(130, 220, 255, ${0.5 * pulse})`;
-    ctx.fill();
   }
 }
 
 // ==================== AURORA (Contact) ====================
-interface AuroraWave {
+interface AuroraDot {
+  x: number;
   y: number;
-  amplitude: number;
-  frequency: number;
-  speed: number;
-  phase: number;
+  baseX: number;
+  baseY: number;
+  radius: number;
+  baseAlpha: number;
+  pulsePhase: number;
+  pulseSpeed: number;
+  breathSpeed: number;
+  breathPhase: number;
   color: { r: number; g: number; b: number };
-  alpha: number;
-  width: number;
+  driftSpeedX: number;
+  driftSpeedY: number;
+  sizeOscSpeed: number;
+  sizeOscPhase: number;
 }
 
-function drawAurora(canvas: HTMLCanvasElement, waves: AuroraWave[], time: number) {
+function drawAurora(canvas: HTMLCanvasElement, dots: AuroraDot[], time: number) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
   const w = canvas.width;
@@ -542,60 +408,34 @@ function drawAurora(canvas: HTMLCanvasElement, waves: AuroraWave[], time: number
   ctx.fillStyle = '#0a0a1a';
   ctx.fillRect(0, 0, w, h);
 
-  // Draw each aurora wave
-  for (const wave of waves) {
-    ctx.beginPath();
-    const baseY = h * wave.y;
-    const offset = time * wave.speed;
-
-    // Top edge of the wave band
-    for (let x = 0; x <= w; x += 3) {
-      const y = baseY
-        + Math.sin(x * wave.frequency + offset + wave.phase) * wave.amplitude
-        + Math.sin(x * wave.frequency * 0.5 + offset * 1.5) * wave.amplitude * 0.5
-        + Math.sin(x * wave.frequency * 2 + offset * 0.7) * wave.amplitude * 0.2;
-      if (x === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-
-    // Bottom edge (offset)
-    for (let x = w; x >= 0; x -= 3) {
-      const y = baseY + wave.width
-        + Math.sin(x * wave.frequency * 0.8 + offset + wave.phase + 1) * wave.amplitude * 0.6
-        + Math.sin(x * wave.frequency * 0.3 + offset * 1.2) * wave.amplitude * 0.3;
-      ctx.lineTo(x, y);
-    }
-    ctx.closePath();
-
-    // Gradient fill for the aurora band
-    const grad = ctx.createLinearGradient(0, baseY - wave.amplitude, 0, baseY + wave.width + wave.amplitude);
-    grad.addColorStop(0, `rgba(${wave.color.r}, ${wave.color.g}, ${wave.color.b}, 0)`);
-    grad.addColorStop(0.3, `rgba(${wave.color.r}, ${wave.color.g}, ${wave.color.b}, ${wave.alpha})`);
-    grad.addColorStop(0.6, `rgba(${wave.color.r}, ${wave.color.g}, ${wave.color.b}, ${wave.alpha * 0.7})`);
-    grad.addColorStop(1, `rgba(${wave.color.r}, ${wave.color.g}, ${wave.color.b}, 0)`);
-    ctx.fillStyle = grad;
-    ctx.fill();
-  }
-
-  // Add subtle stars/sparkles
+  // Subtle ambient gradient glow (no lines)
   ctx.globalCompositeOperation = 'screen';
-  const starCount = 15;
-  for (let i = 0; i < starCount; i++) {
-    const sx = ((Math.sin(i * 137.508 + time * 0.0001) + 1) / 2) * w;
-    const sy = ((Math.cos(i * 73.254 + time * 0.00008) + 1) / 2) * h;
-    const sa = 0.3 + 0.4 * Math.sin(time * 0.002 + i * 2.5);
-    const sr = 1 + Math.sin(time * 0.003 + i) * 0.5;
-
-    const sGrad = ctx.createRadialGradient(sx, sy, 0, sx, sy, sr * 4);
-    sGrad.addColorStop(0, `rgba(255, 255, 255, ${sa * 0.6})`);
-    sGrad.addColorStop(0.5, `rgba(56, 189, 248, ${sa * 0.2})`);
-    sGrad.addColorStop(1, 'rgba(56, 189, 248, 0)');
-    ctx.beginPath();
-    ctx.arc(sx, sy, sr * 4, 0, Math.PI * 2);
-    ctx.fillStyle = sGrad;
-    ctx.fill();
-  }
+  const ambientGrad = ctx.createRadialGradient(w * 0.5, h * 0.4, 0, w * 0.5, h * 0.4, Math.max(w, h) * 0.5);
+  ambientGrad.addColorStop(0, 'rgba(129, 140, 248, 0.03)');
+  ambientGrad.addColorStop(0.5, 'rgba(59, 130, 246, 0.015)');
+  ambientGrad.addColorStop(1, 'rgba(10, 10, 26, 0)');
+  ctx.fillStyle = ambientGrad;
+  ctx.fillRect(0, 0, w, h);
   ctx.globalCompositeOperation = 'source-over';
+
+  for (const dot of dots) {
+    // Gentle drift
+    dot.x = dot.baseX + Math.sin(time * dot.driftSpeedX + dot.pulsePhase) * 30
+                     + Math.sin(time * dot.driftSpeedX * 0.3 + dot.breathPhase) * 15;
+    dot.y = dot.baseY + Math.cos(time * dot.driftSpeedY + dot.pulsePhase * 1.2) * 20
+                     + Math.cos(time * dot.driftSpeedY * 0.5 + dot.breathPhase) * 10;
+
+    // Breath-sync alpha
+    const breath = 0.5 + 0.5 * Math.sin(time * dot.breathSpeed + dot.breathPhase);
+    const pulse = 1 + 0.4 * Math.sin(time * dot.pulseSpeed + dot.pulsePhase);
+    const alpha = dot.baseAlpha * breath * pulse;
+
+    // Size oscillation
+    const sizeOsc = 1 + 0.3 * Math.sin(time * dot.sizeOscSpeed + dot.sizeOscPhase);
+    const r = dot.radius * sizeOsc;
+
+    drawGlowDot(ctx, dot.x, dot.y, Math.max(r, 0.5), dot.color.r, dot.color.g, dot.color.b, alpha, 5);
+  }
 }
 
 // ==================== MAIN COMPONENT ====================
@@ -604,17 +444,15 @@ export default function SectionBackground({ variant }: SectionBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>(0);
   const timeRef = useRef<number>(0);
-
-  // State refs for each animation type
-  const constellationNodesRef = useRef<ConstellationNode[]>([]);
-  const dataStreamsRef = useRef<DataStream[]>([]);
-  const dataPulsesRef = useRef<DataPulse[]>([]);
-  const circuitNodesRef = useRef<CircuitNode[]>([]);
-  const circuitPulsesRef = useRef<CircuitPulse[]>([]);
-  const neuralNodesRef = useRef<NeuralNode[]>([]);
-  const neuralPulsesRef = useRef<NeuralPulse[]>([]);
-  const auroraWavesRef = useRef<AuroraWave[]>([]);
   const initRef = useRef(false);
+
+  // State refs
+  const constellationDotsRef = useRef<Dot[]>([]);
+  const dataStreamDotsRef = useRef<StreamDot[]>([]);
+  const circuitDotsRef = useRef<CircuitDot[]>([]);
+  const circuitSparksRef = useRef<SparkDot[]>([]);
+  const neuralDotsRef = useRef<NeuralDot[]>([]);
+  const auroraDotsRef = useRef<AuroraDot[]>([]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -636,224 +474,190 @@ export default function SectionBackground({ variant }: SectionBackgroundProps) {
     const w = () => canvas.width;
     const h = () => canvas.height;
 
-    // Initialize animations based on variant
     if (!initRef.current) {
       initRef.current = true;
 
+      // ===== CONSTELLATION =====
       if (variant === 'constellation') {
-        const nodeCount = Math.floor((w() * h()) / 12000);
-        const nodes: ConstellationNode[] = [];
-        for (let i = 0; i < Math.max(nodeCount, 30); i++) {
-          nodes.push({
-            x: Math.random() * w(),
-            y: Math.random() * h(),
-            vx: (Math.random() - 0.5) * 0.3,
-            vy: (Math.random() - 0.5) * 0.3,
-            radius: 1.5 + Math.random() * 2,
-            baseAlpha: 0.3 + Math.random() * 0.4,
-            pulsePhase: Math.random() * Math.PI * 2,
-            pulseSpeed: 0.001 + Math.random() * 0.002,
-          });
-        }
-        constellationNodesRef.current = nodes;
+        const colors = [
+          { r: 129, g: 140, b: 248 }, // indigo
+          { r: 99, g: 102, b: 241 },  // violet
+          { r: 165, g: 180, b: 252 }, // light indigo
+          { r: 56, g: 189, b: 248 },  // sky
+        ];
+        const count = Math.max(Math.floor((w() * h()) / 8000), 40);
+        constellationDotsRef.current = initDots(w(), h(), count, colors);
       }
 
+      // ===== DATA STREAM =====
       if (variant === 'data-stream') {
-        const streamCount = Math.floor(w() / 40);
         const colors = [
-          { r: 6, g: 182, b: 212 },  // cyan
+          { r: 6, g: 182, b: 212 },   // cyan
           { r: 59, g: 130, b: 246 },  // blue
           { r: 129, g: 140, b: 248 }, // indigo
           { r: 56, g: 189, b: 248 },  // sky
         ];
-        const streams: DataStream[] = [];
-        for (let i = 0; i < Math.max(streamCount, 20); i++) {
-          streams.push({
+        const count = Math.max(Math.floor(w() / 25), 30);
+        const dots: StreamDot[] = [];
+        for (let i = 0; i < count; i++) {
+          dots.push({
             x: Math.random() * w(),
             y: Math.random() * h(),
-            speed: 0.3 + Math.random() * 1.2,
-            length: 30 + Math.random() * 80,
-            alpha: 0.05 + Math.random() * 0.12,
-            width: 0.5 + Math.random() * 1.5,
+            speed: 0.2 + Math.random() * 0.8,
+            radius: 1.5 + Math.random() * 3,
+            baseAlpha: 0.2 + Math.random() * 0.5,
             color: colors[Math.floor(Math.random() * colors.length)],
             pulsePhase: Math.random() * Math.PI * 2,
-            pulseInterval: 2000 + Math.random() * 5000,
-            nextPulse: Date.now() + Math.random() * 3000,
+            pulseSpeed: 0.001 + Math.random() * 0.003,
+            drift: 0.3 + Math.random() * 0.5,
+            driftSpeed: 0.0005 + Math.random() * 0.001,
+            trail: [],
           });
         }
-        dataStreamsRef.current = streams;
-        dataPulsesRef.current = [];
+        dataStreamDotsRef.current = dots;
       }
 
+      // ===== CIRCUIT =====
       if (variant === 'circuit') {
-        // Create grid-based circuit nodes
-        const cols = Math.floor(w() / 80);
-        const rows = Math.floor(h() / 80);
-        const nodes: CircuitNode[] = [];
-        const nodeMap: (number | null)[][] = [];
-
-        let idx = 0;
-        for (let row = 0; row < rows; row++) {
-          nodeMap[row] = [];
-          for (let col = 0; col < cols; col++) {
-            // Skip some nodes randomly for organic feel
-            if (Math.random() < 0.3) {
-              nodeMap[row][col] = null;
-              continue;
-            }
-            const jitterX = (Math.random() - 0.5) * 20;
-            const jitterY = (Math.random() - 0.5) * 20;
-            nodes.push({
-              x: col * 80 + 40 + jitterX,
-              y: row * 80 + 40 + jitterY,
-              connections: [],
-              pulsePhase: Math.random() * Math.PI * 2,
-              pulseSpeed: 0.001 + Math.random() * 0.002,
-              glowAlpha: 0.2 + Math.random() * 0.3,
-            });
-            nodeMap[row][col] = idx;
-            idx++;
-          }
-        }
-
-        // Connect adjacent nodes
-        for (let row = 0; row < rows; row++) {
-          for (let col = 0; col < cols; col++) {
-            const currentIdx = nodeMap[row][col];
-            if (currentIdx === null) continue;
-
-            // Right neighbor
-            if (col + 1 < cols && nodeMap[row][col + 1] !== null) {
-              if (Math.random() < 0.6) {
-                nodes[currentIdx].connections.push(nodeMap[row][col + 1]!);
-              }
-            }
-            // Bottom neighbor
-            if (row + 1 < rows && nodeMap[row + 1][col] !== null) {
-              if (Math.random() < 0.6) {
-                nodes[currentIdx].connections.push(nodeMap[row + 1][col]!);
-              }
-            }
-            // Diagonal bottom-right
-            if (row + 1 < rows && col + 1 < cols && nodeMap[row + 1][col + 1] !== null) {
-              if (Math.random() < 0.25) {
-                nodes[currentIdx].connections.push(nodeMap[row + 1][col + 1]!);
-              }
-            }
-          }
-        }
-
-        circuitNodesRef.current = nodes;
-
-        // Create traveling pulses
-        const pulses: CircuitPulse[] = [];
-        const pulseColors = [
-          { r: 6, g: 182, b: 212 },
-          { r: 59, g: 130, b: 246 },
-          { r: 56, g: 189, b: 248 },
+        const colors = [
+          { r: 6, g: 182, b: 212 },   // cyan
+          { r: 59, g: 130, b: 246 },  // blue
+          { r: 56, g: 189, b: 248 },  // sky
+          { r: 129, g: 140, b: 248 }, // indigo
         ];
-        for (let i = 0; i < Math.min(8, nodes.length / 3); i++) {
-          const fromIdx = Math.floor(Math.random() * nodes.length);
-          const from = nodes[fromIdx];
-          if (from.connections.length > 0) {
-            const toIdx = from.connections[Math.floor(Math.random() * from.connections.length)];
-            pulses.push({
-              fromNode: fromIdx,
-              toNode: toIdx,
-              progress: Math.random(),
-              speed: 0.003 + Math.random() * 0.005,
-              color: pulseColors[Math.floor(Math.random() * pulseColors.length)],
-              size: 2 + Math.random() * 2,
+        const cols = Math.floor(w() / 70);
+        const rows = Math.floor(h() / 70);
+        const dots: CircuitDot[] = [];
+
+        for (let row = 0; row < rows; row++) {
+          for (let col = 0; col < cols; col++) {
+            if (Math.random() < 0.25) continue; // skip some
+            const jx = (Math.random() - 0.5) * 25;
+            const jy = (Math.random() - 0.5) * 25;
+            dots.push({
+              x: col * 70 + 35 + jx,
+              y: row * 70 + 35 + jy,
+              baseRadius: 2 + Math.random() * 3,
+              baseAlpha: 0.2 + Math.random() * 0.4,
+              pulsePhase: Math.random() * Math.PI * 2,
+              pulseSpeed: 0.001 + Math.random() * 0.003,
+              color: colors[Math.floor(Math.random() * colors.length)],
+              ringPhase: Math.random(),
+              ringSpeed: 0.0005 + Math.random() * 0.001,
+              ringMaxRadius: 15 + Math.random() * 25,
             });
           }
         }
-        circuitPulsesRef.current = pulses;
+        circuitDotsRef.current = dots;
+
+        // Init sparks
+        const sparks: SparkDot[] = [];
+        for (let i = 0; i < Math.min(15, dots.length / 2); i++) {
+          const parent = dots[Math.floor(Math.random() * dots.length)];
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 0.5 + Math.random() * 1.5;
+          sparks.push({
+            x: parent.x,
+            y: parent.y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            radius: 1 + Math.random() * 1.5,
+            alpha: 0.6,
+            color: parent.color,
+            life: 40 + Math.floor(Math.random() * 60),
+            maxLife: 100,
+          });
+        }
+        circuitSparksRef.current = sparks;
       }
 
+      // ===== NEURAL =====
       if (variant === 'neural') {
-        // Create layered neural network nodes
+        const colors = [
+          { r: 56, g: 189, b: 248 },  // sky
+          { r: 129, g: 140, b: 248 }, // indigo
+          { r: 99, g: 102, b: 241 },  // violet
+          { r: 59, g: 130, b: 246 },  // blue
+        ];
         const layers = 5;
-        const nodesPerLayer = Math.floor(h() / 80);
-        const nodes: NeuralNode[] = [];
-        const layerNodes: number[][] = [];
+        const nodesPerLayer = Math.floor(h() / 90);
+        const dots: NeuralDot[] = [];
 
         for (let l = 0; l < layers; l++) {
-          layerNodes[l] = [];
           const count = Math.max(nodesPerLayer - Math.abs(l - Math.floor(layers / 2)) * 2, 3);
           for (let n = 0; n < count; n++) {
             const baseX = (w() / (layers + 1)) * (l + 1);
             const baseY = (h() / (count + 1)) * (n + 1);
-            const idx = nodes.length;
-            nodes.push({
-              x: baseX,
-              y: baseY,
-              baseX,
-              baseY,
-              radius: 3 + Math.random() * 3,
-              pulsePhase: Math.random() * Math.PI * 2,
-              pulseSpeed: 0.001 + Math.random() * 0.002,
-              layer: l,
-              connections: [],
-            });
-            layerNodes[l].push(idx);
-          }
-        }
+            const color = colors[Math.floor(Math.random() * colors.length)];
 
-        // Connect to next layer
-        for (let l = 0; l < layers - 1; l++) {
-          for (const fromIdx of layerNodes[l]) {
-            for (const toIdx of layerNodes[l + 1]) {
-              if (Math.random() < 0.4) {
-                nodes[fromIdx].connections.push(toIdx);
-              }
+            // Create 1-3 orbiting sparks
+            const orbitDots: OrbitSpark[] = [];
+            const numOrbits = 1 + Math.floor(Math.random() * 3);
+            for (let o = 0; o < numOrbits; o++) {
+              orbitDots.push({
+                angle: Math.random() * Math.PI * 2,
+                speed: 0.01 + Math.random() * 0.03,
+                radius: 0.8 + Math.random() * 1.2,
+                distance: 8 + Math.random() * 18,
+                alpha: 0.3 + Math.random() * 0.4,
+                color: {
+                  r: Math.min(color.r + 40, 255),
+                  g: Math.min(color.g + 40, 255),
+                  b: Math.min(color.b + 30, 255),
+                },
+              });
             }
-          }
-        }
 
-        neuralNodesRef.current = nodes;
-
-        // Create pulses
-        const pulses: NeuralPulse[] = [];
-        for (let i = 0; i < Math.min(10, nodes.length / 4); i++) {
-          const fromIdx = Math.floor(Math.random() * nodes.length);
-          const from = nodes[fromIdx];
-          if (from.connections.length > 0) {
-            const toIdx = from.connections[Math.floor(Math.random() * from.connections.length)];
-            pulses.push({
-              fromNode: fromIdx,
-              toNode: toIdx,
-              progress: Math.random(),
-              speed: 0.004 + Math.random() * 0.006,
+            dots.push({
+              x: baseX, y: baseY,
+              baseX, baseY,
+              radius: 3 + Math.random() * 4,
+              baseAlpha: 0.2 + Math.random() * 0.4,
+              pulsePhase: Math.random() * Math.PI * 2,
+              pulseSpeed: 0.001 + Math.random() * 0.003,
+              color,
+              oscillateAmplitude: 5 + Math.random() * 12,
+              oscillateSpeedX: 0.0003 + Math.random() * 0.0008,
+              oscillateSpeedY: 0.0004 + Math.random() * 0.0006,
+              orbitDots,
             });
           }
         }
-        neuralPulsesRef.current = pulses;
+        neuralDotsRef.current = dots;
       }
 
+      // ===== AURORA =====
       if (variant === 'aurora') {
-        const waves: AuroraWave[] = [
-          {
-            y: 0.3, amplitude: 40, frequency: 0.003, speed: 0.0004,
-            phase: 0, color: { r: 59, g: 130, b: 246 }, alpha: 0.06, width: 60,
-          },
-          {
-            y: 0.45, amplitude: 50, frequency: 0.002, speed: 0.0003,
-            phase: 1.5, color: { r: 129, g: 140, b: 248 }, alpha: 0.05, width: 80,
-          },
-          {
-            y: 0.55, amplitude: 35, frequency: 0.004, speed: 0.0005,
-            phase: 3, color: { r: 56, g: 189, b: 248 }, alpha: 0.07, width: 50,
-          },
-          {
-            y: 0.4, amplitude: 60, frequency: 0.0015, speed: 0.0002,
-            phase: 2, color: { r: 6, g: 182, b: 212 }, alpha: 0.04, width: 100,
-          },
-          {
-            y: 0.6, amplitude: 25, frequency: 0.005, speed: 0.0006,
-            phase: 4.5, color: { r: 99, g: 102, b: 241 }, alpha: 0.05, width: 40,
-          },
+        const colors = [
+          { r: 59, g: 130, b: 246 },  // blue
+          { r: 129, g: 140, b: 248 }, // indigo
+          { r: 56, g: 189, b: 248 },  // sky
+          { r: 6, g: 182, b: 212 },   // cyan
+          { r: 99, g: 102, b: 241 },  // violet
+          { r: 165, g: 180, b: 252 }, // light indigo
         ];
-        auroraWavesRef.current = waves;
+        const count = Math.max(Math.floor((w() * h()) / 6000), 50);
+        const dots: AuroraDot[] = [];
+        for (let i = 0; i < count; i++) {
+          const baseX = Math.random() * w();
+          const baseY = Math.random() * h();
+          dots.push({
+            x: baseX, y: baseY,
+            baseX, baseY,
+            radius: 1.5 + Math.random() * 4,
+            baseAlpha: 0.15 + Math.random() * 0.45,
+            pulsePhase: Math.random() * Math.PI * 2,
+            pulseSpeed: 0.001 + Math.random() * 0.002,
+            breathSpeed: 0.0005 + Math.random() * 0.001,
+            breathPhase: Math.random() * Math.PI * 2,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            driftSpeedX: 0.0002 + Math.random() * 0.0005,
+            driftSpeedY: 0.0001 + Math.random() * 0.0003,
+            sizeOscSpeed: 0.001 + Math.random() * 0.003,
+            sizeOscPhase: Math.random() * Math.PI * 2,
+          });
+        }
+        auroraDotsRef.current = dots;
       }
     }
 
@@ -863,23 +667,23 @@ export default function SectionBackground({ variant }: SectionBackgroundProps) {
 
       switch (variant) {
         case 'constellation':
-          drawConstellation(canvas, constellationNodesRef.current, t);
+          drawConstellation(canvas, constellationDotsRef.current, t);
           break;
         case 'data-stream':
-          drawDataStream(canvas, dataStreamsRef.current, dataPulsesRef.current, Date.now());
+          drawDataStream(canvas, dataStreamDotsRef.current, t);
           break;
         case 'circuit':
-          drawCircuit(canvas, circuitNodesRef.current, circuitPulsesRef.current, t);
+          drawCircuit(canvas, circuitDotsRef.current, circuitSparksRef.current, t);
           break;
         case 'neural':
-          drawNeural(canvas, neuralNodesRef.current, neuralPulsesRef.current, t);
+          drawNeural(canvas, neuralDotsRef.current, t);
           break;
         case 'aurora':
-          drawAurora(canvas, auroraWavesRef.current, t);
+          drawAurora(canvas, auroraDotsRef.current, t);
           break;
       }
 
-      // Vignette for all sections
+      // Vignette
       const cw = canvas.width;
       const ch = canvas.height;
       const vignetteGrad = ctx.createRadialGradient(
@@ -891,7 +695,7 @@ export default function SectionBackground({ variant }: SectionBackgroundProps) {
       ctx.fillStyle = vignetteGrad;
       ctx.fillRect(0, 0, cw, ch);
 
-      // Top/bottom fade for seamless section transitions
+      // Top/bottom fade
       const topFade = ctx.createLinearGradient(0, 0, 0, ch * 0.12);
       topFade.addColorStop(0, 'rgba(10, 10, 26, 0.8)');
       topFade.addColorStop(1, 'rgba(10, 10, 26, 0)');

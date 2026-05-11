@@ -218,30 +218,6 @@ export default function ParticleBackground() {
       // Reset composite
       ctx.globalCompositeOperation = 'source-over';
 
-      // Add subtle flowing wave lines across the scene
-      ctx.globalCompositeOperation = 'screen';
-      for (let wave = 0; wave < 4; wave++) {
-        ctx.beginPath();
-        const waveY = ch * (0.3 + wave * 0.15);
-        const amplitude = 30 + wave * 15;
-        const frequency = 0.003 + wave * 0.001;
-        const speed = t * (0.0005 + wave * 0.0002);
-
-        ctx.moveTo(0, waveY + Math.sin(speed) * amplitude);
-        for (let x = 0; x <= cw; x += 4) {
-          const y = waveY
-            + Math.sin(x * frequency + speed + wave) * amplitude
-            + Math.sin(x * frequency * 2.3 + speed * 1.5) * amplitude * 0.3;
-          ctx.lineTo(x, y);
-        }
-
-        const waveAlpha = 0.03 + wave * 0.01;
-        ctx.strokeStyle = `rgba(59, 130, 246, ${waveAlpha})`;
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-      }
-      ctx.globalCompositeOperation = 'source-over';
-
       // Vignette overlay for depth
       const vignetteGrad = ctx.createRadialGradient(
         cw / 2, ch / 2, Math.min(cw, ch) * 0.2,
