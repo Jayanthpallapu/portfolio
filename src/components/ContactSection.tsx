@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Send, Github, Linkedin, Mail, MapPin, Phone, CheckCircle, AlertCircle } from 'lucide-react';
 import SectionWrapper from './SectionWrapper';
-import { submitContact } from '@/lib/api';
 
 const contactInfo = [
   {
@@ -64,14 +63,22 @@ export default function ContactSection() {
     setErrorMessage('');
 
     try {
-      const result = await submitContact({
-        name: formData.name,
-        email: formData.email,
-        message: formData.message,
-        source: 'portfolio_website',
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+          source: 'portfolio_website',
+        }),
       });
 
-      if (result.success) {
+      const result = await response.json().catch(() => ({ success: false, message: 'Request failed' }));
+
+      if (response.ok && result.success) {
         setStatus('success');
         setFormData({ name: '', email: '', message: '' });
         setTimeout(() => setStatus('idle'), 4000);

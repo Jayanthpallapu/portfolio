@@ -39,7 +39,7 @@ export default function SectionWrapper({ children, id, className = '', backgroun
 
       {/* Section glow divider */}
       {showDivider && (
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/5 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/5 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
       )}
     </section>
   );

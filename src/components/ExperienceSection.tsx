@@ -86,7 +86,7 @@ export default function ExperienceSection() {
 
       <div ref={timelineRef} className="relative">
         {/* Timeline line */}
-        <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-[#3b82f6]/50 via-[#818cf8]/50 to-[#38bdf8]/50 md:-translate-x-px" />
+        <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary/50 via-accent/50 to-primary/50 md:-translate-x-px" />
 
         <div className="space-y-12">
           {experiences.map((exp, i) => (
@@ -103,7 +103,7 @@ export default function ExperienceSection() {
               <div className="absolute left-4 md:left-1/2 top-6 w-3 h-3 rounded-full -translate-x-1/2 md:-translate-x-1.5 z-10"
                 style={{
                   backgroundColor: exp.color,
-                  boxShadow: `0 0 12px ${exp.color}60`,
+                  boxShadow: `0 0 12px color-mix(in srgb, ${exp.color} 37.6%, transparent)`,
                 }}
               />
 
@@ -116,8 +116,8 @@ export default function ExperienceSection() {
                   whileHover={{ y: -3 }}
                   className="glass rounded-2xl p-6 transition-all duration-300"
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow = `0 0 30px ${exp.color}15`;
-                    e.currentTarget.style.borderColor = `${exp.color}30`;
+                    e.currentTarget.style.boxShadow = `0 0 30px color-mix(in srgb, ${exp.color} 8.2%, transparent)`;
+                    e.currentTarget.style.borderColor = `color-mix(in srgb, ${exp.color} 18.8%, transparent)`;
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.boxShadow = '0 0 0 rgba(0,0,0,0)';
@@ -127,7 +127,7 @@ export default function ExperienceSection() {
                   <div className="flex items-center gap-3 mb-3">
                     <div
                       className="w-10 h-10 rounded-xl flex items-center justify-center"
-                      style={{ backgroundColor: `${exp.color}15`, color: exp.color }}
+                      style={{ backgroundColor: `color-mix(in srgb, ${exp.color} 8.2%, transparent)`, color: exp.color }}
                     >
                       <Briefcase size={20} />
                     </div>
@@ -159,9 +159,9 @@ export default function ExperienceSection() {
                         key={t}
                         className="px-2.5 py-1 text-xs rounded-lg font-medium"
                         style={{
-                          backgroundColor: `${exp.color}10`,
+                          backgroundColor: `color-mix(in srgb, ${exp.color} 6.3%, transparent)`,
                           color: exp.color,
-                          border: `1px solid ${exp.color}20`,
+                          border: `1px solid color-mix(in srgb, ${exp.color} 12.5%, transparent)`,
                         }}
                       >
                         {t}
@@ -184,12 +184,12 @@ export default function ExperienceSection() {
         className="mt-16 glass rounded-2xl p-6 max-w-2xl mx-auto"
       >
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-[#3b82f6]/10 text-[#3b82f6]">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary">
             <Briefcase size={20} />
           </div>
           <div>
             <h3 className="text-white font-semibold text-lg">B.Com Computer Applications</h3>
-            <p className="text-[#38bdf8] text-sm font-medium">Sri Venkateswara University, Tirupathi</p>
+            <p className="text-primary text-sm font-medium">Sri Venkateswara University, Tirupathi</p>
           </div>
         </div>
         <p className="text-gray-500 text-sm font-mono ml-13">Graduated: Sep 2022</p>

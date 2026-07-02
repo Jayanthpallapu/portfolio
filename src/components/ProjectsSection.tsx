@@ -80,8 +80,8 @@ export default function ProjectsSection() {
             whileHover={{ y: -8, scale: 1.02 }}
             className="glass rounded-2xl p-6 group cursor-pointer transition-all duration-300 flex flex-col"
             onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = `0 0 30px ${project.color}20`;
-              e.currentTarget.style.borderColor = `${project.color}30`;
+              e.currentTarget.style.boxShadow = `0 0 30px color-mix(in srgb, ${project.color} 12.5%, transparent)`;
+              e.currentTarget.style.borderColor = `color-mix(in srgb, ${project.color} 18.8%, transparent)`;
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.boxShadow = '0 0 0 rgba(0,0,0,0)';
@@ -118,9 +118,9 @@ export default function ProjectsSection() {
                   key={t}
                   className="px-2.5 py-1 text-xs rounded-md font-medium"
                   style={{
-                    backgroundColor: `${project.color}10`,
+                    backgroundColor: `color-mix(in srgb, ${project.color} 6.3%, transparent)`,
                     color: project.color,
-                    border: `1px solid ${project.color}20`,
+                    border: `1px solid color-mix(in srgb, ${project.color} 12.5%, transparent)`,
                   }}
                 >
                   {t}

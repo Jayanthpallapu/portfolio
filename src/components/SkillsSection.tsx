@@ -79,8 +79,8 @@ function SkillBar({ skill, color, delay }: { skill: Skill; color: string; delay:
           transition={{ delay: delay, duration: 1, ease: 'easeOut' }}
           className="h-full rounded-full relative"
           style={{
-            background: `linear-gradient(90deg, ${color}, ${color}80)`,
-            boxShadow: `0 0 10px ${color}40`,
+            background: `linear-gradient(90deg, ${color}, color-mix(in srgb, ${color} 50%, transparent))`,
+            boxShadow: `0 0 10px color-mix(in srgb, ${color} 25%, transparent)`,
           }}
         >
           <div
@@ -133,10 +133,10 @@ export default function SkillsSection() {
             style={
               activeCategory === category.title
                 ? {
-                    backgroundColor: `${category.color}20`,
-                    border: `1px solid ${category.color}40`,
+                    backgroundColor: `color-mix(in srgb, ${category.color} 12.5%, transparent)`,
+                    border: `1px solid color-mix(in srgb, ${category.color} 25%, transparent)`,
                     color: category.color,
-                    boxShadow: `0 0 15px ${category.color}15`,
+                    boxShadow: `0 0 15px color-mix(in srgb, ${category.color} 8.2%, transparent)`,
                   }
                 : {}
             }

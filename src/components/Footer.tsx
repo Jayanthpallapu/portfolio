@@ -11,18 +11,18 @@ const socialLinks = [
 
 export default function Footer() {
   return (
-    <footer className="relative border-t border-[#3b82f6]/10 overflow-hidden">
+    <footer className="relative border-t border-primary/10 overflow-hidden">
       {/* Subtle gradient background */}
       <div className="absolute inset-0 bg-gradient-to-t from-[#050510] via-[#0a0a1a] to-[#0a0a1a]" />
 
       {/* Glow line at top */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-[#3b82f6]/40 to-transparent" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
 
       {/* Subtle aurora remnant at bottom */}
       <div
         className="absolute bottom-0 left-0 right-0 h-32 opacity-20"
         style={{
-          background: 'radial-gradient(ellipse 80% 100% at 50% 100%, rgba(129, 140, 248, 0.15) 0%, rgba(56, 189, 248, 0.05) 40%, transparent 70%)',
+          background: 'radial-gradient(ellipse 80% 100% at 50% 100%, color-mix(in srgb, var(--accent) 15%, transparent) 0%, color-mix(in srgb, var(--primary) 5%, transparent) 40%, transparent 70%)',
         }}
       />
 

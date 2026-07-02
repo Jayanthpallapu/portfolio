@@ -19,12 +19,32 @@ interface SectionBackgroundProps {
   variant: BackgroundVariant;
 }
 
+interface HslColor {
+  hOffset: number;
+  s: number;
+  l: number;
+}
+
 // ==================== SHARED HELPERS ====================
-const hexToRgb = (hex: string) => {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result
-    ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) }
-    : { r: 0, g: 100, b: 255 };
+const hslToRgb = (h: number, s: number, l: number) => {
+  h = ((h % 360) + 360) % 360;
+  s /= 100;
+  l /= 100;
+  const k = (n: number) => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = (n: number) =>
+    l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1));
+  return {
+    r: Math.round(255 * f(0)),
+    g: Math.round(255 * f(8)),
+    b: Math.round(255 * f(4)),
+  };
+};
+
+const getThemeHue = () => {
+  if (typeof window === 'undefined') return 200;
+  const val = getComputedStyle(document.documentElement).getPropertyValue('--theme-hue');
+  return val ? parseInt(val.trim(), 10) : 200;
 };
 
 function drawGlowDot(
@@ -73,7 +93,7 @@ interface Dot {
   baseAlpha: number;
   pulsePhase: number;
   pulseSpeed: number;
-  color: { r: number; g: number; b: number };
+  color: HslColor;
   orbitRadius: number;
   orbitSpeed: number;
   orbitPhase: number;
@@ -81,7 +101,7 @@ interface Dot {
   baseY: number;
 }
 
-function initDots(w: number, h: number, count: number, colors: { r: number; g: number; b: number }[]): Dot[] {
+function initDots(w: number, h: number, count: number, colors: HslColor[]): Dot[] {
   const dots: Dot[] = [];
   for (let i = 0; i < count; i++) {
     const x = Math.random() * w;
@@ -106,7 +126,7 @@ function initDots(w: number, h: number, count: number, colors: { r: number; g: n
   return dots;
 }
 
-function drawConstellation(canvas: HTMLCanvasElement, dots: Dot[], time: number) {
+function drawConstellation(canvas: HTMLCanvasElement, dots: Dot[], time: number, themeHue: number) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
   const w = canvas.width;
@@ -149,10 +169,11 @@ function drawConstellation(canvas: HTMLCanvasElement, dots: Dot[], time: number)
       }
     }
 
+    const rgb = hslToRgb(themeHue + dot.color.hOffset, dot.color.s, dot.color.l);
     drawGlowDot(
       ctx, drawX, drawY,
       Math.max(r, 0.5),
-      dot.color.r, dot.color.g, dot.color.b,
+      rgb.r, rgb.g, rgb.b,
       Math.min(alpha + proximityBoost, 1),
       4
     );
@@ -166,7 +187,7 @@ interface StreamDot {
   speed: number;
   radius: number;
   baseAlpha: number;
-  color: { r: number; g: number; b: number };
+  color: HslColor;
   pulsePhase: number;
   pulseSpeed: number;
   drift: number;
@@ -174,7 +195,7 @@ interface StreamDot {
   trail: { x: number; y: number; alpha: number }[];
 }
 
-function drawDataStream(canvas: HTMLCanvasElement, dots: StreamDot[], time: number) {
+function drawDataStream(canvas: HTMLCanvasElement, dots: StreamDot[], time: number, themeHue: number) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
   const w = canvas.width;
@@ -194,6 +215,8 @@ function drawDataStream(canvas: HTMLCanvasElement, dots: StreamDot[], time: numb
       dot.trail = [];
     }
 
+    const rgb = hslToRgb(themeHue + dot.color.hOffset, dot.color.s, dot.color.l);
+
     // Update trail
     dot.trail.push({ x: dot.x, y: dot.y, alpha: dot.baseAlpha * 0.4 });
     if (dot.trail.length > 8) dot.trail.shift();
@@ -205,7 +228,7 @@ function drawDataStream(canvas: HTMLCanvasElement, dots: StreamDot[], time: numb
       const trailR = dot.radius * (0.3 + 0.7 * (i / dot.trail.length));
       ctx.beginPath();
       ctx.arc(t.x, t.y, Math.max(trailR, 0.3), 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${dot.color.r}, ${dot.color.g}, ${dot.color.b}, ${trailAlpha})`;
+      ctx.fillStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${trailAlpha})`;
       ctx.fill();
     }
 
@@ -213,7 +236,7 @@ function drawDataStream(canvas: HTMLCanvasElement, dots: StreamDot[], time: numb
     const pulse = 1 + 0.4 * Math.sin(time * dot.pulseSpeed + dot.pulsePhase);
     const alpha = dot.baseAlpha * pulse;
 
-    drawGlowDot(ctx, dot.x, dot.y, dot.radius, dot.color.r, dot.color.g, dot.color.b, alpha, 5);
+    drawGlowDot(ctx, dot.x, dot.y, dot.radius, rgb.r, rgb.g, rgb.b, alpha, 5);
   }
 }
 
@@ -225,7 +248,7 @@ interface CircuitDot {
   baseAlpha: number;
   pulsePhase: number;
   pulseSpeed: number;
-  color: { r: number; g: number; b: number };
+  color: HslColor;
   ringPhase: number;
   ringSpeed: number;
   ringMaxRadius: number;
@@ -238,7 +261,7 @@ interface SparkDot {
   vy: number;
   radius: number;
   alpha: number;
-  color: { r: number; g: number; b: number };
+  color: HslColor;
   life: number;
   maxLife: number;
 }
@@ -247,7 +270,8 @@ function drawCircuit(
   canvas: HTMLCanvasElement,
   dots: CircuitDot[],
   sparks: SparkDot[],
-  time: number
+  time: number,
+  themeHue: number
 ) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
@@ -263,7 +287,8 @@ function drawCircuit(
     const alpha = dot.baseAlpha * pulse;
     const r = dot.baseRadius * pulse;
 
-    drawGlowDot(ctx, dot.x, dot.y, Math.max(r, 0.5), dot.color.r, dot.color.g, dot.color.b, alpha, 4);
+    const rgb = hslToRgb(themeHue + dot.color.hOffset, dot.color.s, dot.color.l);
+    drawGlowDot(ctx, dot.x, dot.y, Math.max(r, 0.5), rgb.r, rgb.g, rgb.b, alpha, 4);
 
     // Expanding ripple dots (instead of ring stroke)
     const ringProgress = ((time * dot.ringSpeed + dot.ringPhase) % 1);
@@ -276,7 +301,7 @@ function drawCircuit(
       const ry = dot.y + Math.sin(angle) * ringRadius;
       ctx.beginPath();
       ctx.arc(rx, ry, Math.max(0.8, 0.8), 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${dot.color.r}, ${dot.color.g}, ${dot.color.b}, ${ringAlpha})`;
+      ctx.fillStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${ringAlpha})`;
       ctx.fill();
     }
   }
@@ -306,7 +331,8 @@ function drawCircuit(
       continue;
     }
 
-    drawGlowDot(ctx, spark.x, spark.y, Math.max(spark.radius, 0.3), spark.color.r, spark.color.g, spark.color.b, spark.alpha, 3);
+    const sparkRgb = hslToRgb(themeHue + spark.color.hOffset, spark.color.s, spark.color.l);
+    drawGlowDot(ctx, spark.x, spark.y, Math.max(spark.radius, 0.3), sparkRgb.r, sparkRgb.g, sparkRgb.b, spark.alpha, 3);
   }
 }
 
@@ -320,7 +346,7 @@ interface NeuralDot {
   baseAlpha: number;
   pulsePhase: number;
   pulseSpeed: number;
-  color: { r: number; g: number; b: number };
+  color: HslColor;
   oscillateAmplitude: number;
   oscillateSpeedX: number;
   oscillateSpeedY: number;
@@ -333,10 +359,10 @@ interface OrbitSpark {
   radius: number;
   distance: number;
   alpha: number;
-  color: { r: number; g: number; b: number };
+  color: HslColor;
 }
 
-function drawNeural(canvas: HTMLCanvasElement, dots: NeuralDot[], time: number) {
+function drawNeural(canvas: HTMLCanvasElement, dots: NeuralDot[], time: number, themeHue: number) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
   const w = canvas.width;
@@ -354,7 +380,8 @@ function drawNeural(canvas: HTMLCanvasElement, dots: NeuralDot[], time: number) 
     const alpha = dot.baseAlpha * pulse;
     const r = dot.radius * (0.7 + 0.5 * Math.sin(time * dot.pulseSpeed * 1.2 + dot.pulsePhase));
 
-    drawGlowDot(ctx, dot.x, dot.y, Math.max(r, 0.5), dot.color.r, dot.color.g, dot.color.b, alpha, 4);
+    const rgb = hslToRgb(themeHue + dot.color.hOffset, dot.color.s, dot.color.l);
+    drawGlowDot(ctx, dot.x, dot.y, Math.max(r, 0.5), rgb.r, rgb.g, rgb.b, alpha, 4);
 
     // Draw orbiting sparks
     for (const orbit of dot.orbitDots) {
@@ -363,15 +390,16 @@ function drawNeural(canvas: HTMLCanvasElement, dots: NeuralDot[], time: number) 
       const oy = dot.y + Math.sin(orbit.angle) * orbit.distance;
       const oAlpha = orbit.alpha * pulse;
 
+      const orbitRgb = hslToRgb(themeHue + orbit.color.hOffset, orbit.color.s, orbit.color.l);
       ctx.beginPath();
       ctx.arc(ox, oy, Math.max(orbit.radius, 0.3), 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${orbit.color.r}, ${orbit.color.g}, ${orbit.color.b}, ${oAlpha})`;
+      ctx.fillStyle = `rgba(${orbitRgb.r}, ${orbitRgb.g}, ${orbitRgb.b}, ${oAlpha})`;
       ctx.fill();
 
       // Tiny glow
       const oGrad = ctx.createRadialGradient(ox, oy, 0, ox, oy, orbit.radius * 4);
-      oGrad.addColorStop(0, `rgba(${orbit.color.r}, ${orbit.color.g}, ${orbit.color.b}, ${oAlpha * 0.3})`);
-      oGrad.addColorStop(1, `rgba(${orbit.color.r}, ${orbit.color.g}, ${orbit.color.b}, 0)`);
+      oGrad.addColorStop(0, `rgba(${orbitRgb.r}, ${orbitRgb.g}, ${orbitRgb.b}, ${oAlpha * 0.3})`);
+      oGrad.addColorStop(1, `rgba(${orbitRgb.r}, ${orbitRgb.g}, ${orbitRgb.b}, 0)`);
       ctx.beginPath();
       ctx.arc(ox, oy, orbit.radius * 4, 0, Math.PI * 2);
       ctx.fillStyle = oGrad;
@@ -392,14 +420,14 @@ interface AuroraDot {
   pulseSpeed: number;
   breathSpeed: number;
   breathPhase: number;
-  color: { r: number; g: number; b: number };
+  color: HslColor;
   driftSpeedX: number;
   driftSpeedY: number;
   sizeOscSpeed: number;
   sizeOscPhase: number;
 }
 
-function drawAurora(canvas: HTMLCanvasElement, dots: AuroraDot[], time: number) {
+function drawAurora(canvas: HTMLCanvasElement, dots: AuroraDot[], time: number, themeHue: number) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
   const w = canvas.width;
@@ -411,8 +439,10 @@ function drawAurora(canvas: HTMLCanvasElement, dots: AuroraDot[], time: number) 
   // Subtle ambient gradient glow (no lines)
   ctx.globalCompositeOperation = 'screen';
   const ambientGrad = ctx.createRadialGradient(w * 0.5, h * 0.4, 0, w * 0.5, h * 0.4, Math.max(w, h) * 0.5);
-  ambientGrad.addColorStop(0, 'rgba(129, 140, 248, 0.03)');
-  ambientGrad.addColorStop(0.5, 'rgba(59, 130, 246, 0.015)');
+  const color1 = hslToRgb(themeHue + 60, 90, 74);
+  const color2 = hslToRgb(themeHue - 20, 91, 60);
+  ambientGrad.addColorStop(0, `rgba(${color1.r}, ${color1.g}, ${color1.b}, 0.03)`);
+  ambientGrad.addColorStop(0.5, `rgba(${color2.r}, ${color2.g}, ${color2.b}, 0.015)`);
   ambientGrad.addColorStop(1, 'rgba(10, 10, 26, 0)');
   ctx.fillStyle = ambientGrad;
   ctx.fillRect(0, 0, w, h);
@@ -434,7 +464,8 @@ function drawAurora(canvas: HTMLCanvasElement, dots: AuroraDot[], time: number) 
     const sizeOsc = 1 + 0.3 * Math.sin(time * dot.sizeOscSpeed + dot.sizeOscPhase);
     const r = dot.radius * sizeOsc;
 
-    drawGlowDot(ctx, dot.x, dot.y, Math.max(r, 0.5), dot.color.r, dot.color.g, dot.color.b, alpha, 5);
+    const rgb = hslToRgb(themeHue + dot.color.hOffset, dot.color.s, dot.color.l);
+    drawGlowDot(ctx, dot.x, dot.y, Math.max(r, 0.5), rgb.r, rgb.g, rgb.b, alpha, 5);
   }
 }
 
@@ -479,11 +510,11 @@ export default function SectionBackground({ variant }: SectionBackgroundProps) {
 
       // ===== CONSTELLATION =====
       if (variant === 'constellation') {
-        const colors = [
-          { r: 129, g: 140, b: 248 }, // indigo
-          { r: 99, g: 102, b: 241 },  // violet
-          { r: 165, g: 180, b: 252 }, // light indigo
-          { r: 56, g: 189, b: 248 },  // sky
+        const colors: HslColor[] = [
+          { hOffset: 60, s: 90, l: 74 }, // indigo
+          { hOffset: 60, s: 84, l: 67 }, // violet
+          { hOffset: 60, s: 89, l: 82 }, // light indigo
+          { hOffset: 0, s: 93, l: 60 },  // sky
         ];
         const count = Math.max(Math.floor((w() * h()) / 8000), 40);
         constellationDotsRef.current = initDots(w(), h(), count, colors);
@@ -491,11 +522,11 @@ export default function SectionBackground({ variant }: SectionBackgroundProps) {
 
       // ===== DATA STREAM =====
       if (variant === 'data-stream') {
-        const colors = [
-          { r: 6, g: 182, b: 212 },   // cyan
-          { r: 59, g: 130, b: 246 },  // blue
-          { r: 129, g: 140, b: 248 }, // indigo
-          { r: 56, g: 189, b: 248 },  // sky
+        const colors: HslColor[] = [
+          { hOffset: 15, s: 94, l: 43 },  // cyan
+          { hOffset: -20, s: 91, l: 60 }, // blue
+          { hOffset: 60, s: 90, l: 74 },  // indigo
+          { hOffset: 0, s: 93, l: 60 },   // sky
         ];
         const count = Math.max(Math.floor(w() / 25), 30);
         const dots: StreamDot[] = [];
@@ -519,11 +550,11 @@ export default function SectionBackground({ variant }: SectionBackgroundProps) {
 
       // ===== CIRCUIT =====
       if (variant === 'circuit') {
-        const colors = [
-          { r: 6, g: 182, b: 212 },   // cyan
-          { r: 59, g: 130, b: 246 },  // blue
-          { r: 56, g: 189, b: 248 },  // sky
-          { r: 129, g: 140, b: 248 }, // indigo
+        const colors: HslColor[] = [
+          { hOffset: 15, s: 94, l: 43 },  // cyan
+          { hOffset: -20, s: 91, l: 60 }, // blue
+          { hOffset: 0, s: 93, l: 60 },   // sky
+          { hOffset: 60, s: 90, l: 74 },  // indigo
         ];
         const cols = Math.floor(w() / 70);
         const rows = Math.floor(h() / 70);
@@ -573,11 +604,11 @@ export default function SectionBackground({ variant }: SectionBackgroundProps) {
 
       // ===== NEURAL =====
       if (variant === 'neural') {
-        const colors = [
-          { r: 56, g: 189, b: 248 },  // sky
-          { r: 129, g: 140, b: 248 }, // indigo
-          { r: 99, g: 102, b: 241 },  // violet
-          { r: 59, g: 130, b: 246 },  // blue
+        const colors: HslColor[] = [
+          { hOffset: 0, s: 93, l: 60 },   // sky
+          { hOffset: 60, s: 90, l: 74 },  // indigo
+          { hOffset: 60, s: 84, l: 67 },  // violet
+          { hOffset: -20, s: 91, l: 60 }, // blue
         ];
         const layers = 5;
         const nodesPerLayer = Math.floor(h() / 90);
@@ -601,9 +632,9 @@ export default function SectionBackground({ variant }: SectionBackgroundProps) {
                 distance: 8 + Math.random() * 18,
                 alpha: 0.3 + Math.random() * 0.4,
                 color: {
-                  r: Math.min(color.r + 40, 255),
-                  g: Math.min(color.g + 40, 255),
-                  b: Math.min(color.b + 30, 255),
+                  hOffset: color.hOffset,
+                  s: color.s,
+                  l: Math.min(color.l + 10, 100),
                 },
               });
             }
@@ -628,13 +659,13 @@ export default function SectionBackground({ variant }: SectionBackgroundProps) {
 
       // ===== AURORA =====
       if (variant === 'aurora') {
-        const colors = [
-          { r: 59, g: 130, b: 246 },  // blue
-          { r: 129, g: 140, b: 248 }, // indigo
-          { r: 56, g: 189, b: 248 },  // sky
-          { r: 6, g: 182, b: 212 },   // cyan
-          { r: 99, g: 102, b: 241 },  // violet
-          { r: 165, g: 180, b: 252 }, // light indigo
+        const colors: HslColor[] = [
+          { hOffset: -20, s: 91, l: 60 }, // blue
+          { hOffset: 60, s: 90, l: 74 },  // indigo
+          { hOffset: 0, s: 93, l: 60 },   // sky
+          { hOffset: 15, s: 94, l: 43 },  // cyan
+          { hOffset: 60, s: 84, l: 67 },  // violet
+          { hOffset: 60, s: 89, l: 82 },  // light indigo
         ];
         const count = Math.max(Math.floor((w() * h()) / 6000), 50);
         const dots: AuroraDot[] = [];
@@ -664,22 +695,23 @@ export default function SectionBackground({ variant }: SectionBackgroundProps) {
     const animate = () => {
       timeRef.current += 1;
       const t = timeRef.current;
+      const themeHue = getThemeHue();
 
       switch (variant) {
         case 'constellation':
-          drawConstellation(canvas, constellationDotsRef.current, t);
+          drawConstellation(canvas, constellationDotsRef.current, t, themeHue);
           break;
         case 'data-stream':
-          drawDataStream(canvas, dataStreamDotsRef.current, t);
+          drawDataStream(canvas, dataStreamDotsRef.current, t, themeHue);
           break;
         case 'circuit':
-          drawCircuit(canvas, circuitDotsRef.current, circuitSparksRef.current, t);
+          drawCircuit(canvas, circuitDotsRef.current, circuitSparksRef.current, t, themeHue);
           break;
         case 'neural':
-          drawNeural(canvas, neuralDotsRef.current, t);
+          drawNeural(canvas, neuralDotsRef.current, t, themeHue);
           break;
         case 'aurora':
-          drawAurora(canvas, auroraDotsRef.current, t);
+          drawAurora(canvas, auroraDotsRef.current, t, themeHue);
           break;
       }
 

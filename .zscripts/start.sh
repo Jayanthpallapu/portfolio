@@ -53,9 +53,6 @@ cd "$BUILD_DIR" || exit 1
 
 ls -lah
 
-DEFAULT_PACKAGED_DB_PATH="/app/db/custom.db"
-DEFAULT_PACKAGED_DATABASE_URL="file:$DEFAULT_PACKAGED_DB_PATH"
-
 # 启动 Next.js 服务器
 if [ -f "./next-service-dist/server.js" ]; then
     echo "🚀 启动 Next.js 服务器..."
@@ -65,19 +62,6 @@ if [ -f "./next-service-dist/server.js" ]; then
     export NODE_ENV=production
     export PORT="${PORT:-3000}"
     export HOSTNAME="${HOSTNAME:-0.0.0.0}"
-    export DATABASE_URL="${DATABASE_URL:-$DEFAULT_PACKAGED_DATABASE_URL}"
-
-    if [ "$DATABASE_URL" = "$DEFAULT_PACKAGED_DATABASE_URL" ]; then
-        if [ ! -f "$DEFAULT_PACKAGED_DB_PATH" ]; then
-            echo "❌ 未找到打包后的数据库文件 $DEFAULT_PACKAGED_DB_PATH"
-            echo "   为避免生产环境启动到空数据库，启动已终止"
-            exit 1
-        fi
-
-        echo "🗄️  当前使用打包数据库: $DEFAULT_PACKAGED_DB_PATH"
-    else
-        echo "🗄️  当前使用外部指定数据库: $DATABASE_URL"
-    fi
     
     # 后台启动 Next.js
     bun server.js &
@@ -96,28 +80,6 @@ if [ -f "./next-service-dist/server.js" ]; then
     cd ../
 else
     echo "⚠️  未找到 Next.js 服务器文件: ./next-service-dist/server.js"
-fi
-
-# 启动 mini-services
-if [ -f "./mini-services-start.sh" ]; then
-    echo "🚀 启动 mini-services..."
-    
-    # 运行启动脚本（从根目录运行，脚本内部会处理 mini-services-dist 目录）
-    sh ./mini-services-start.sh &
-    MINI_PID=$!
-    pids="$pids $MINI_PID"
-    
-    # 等待一小段时间检查进程是否成功启动
-    sleep 1
-    if ! kill -0 "$MINI_PID" 2>/dev/null; then
-        echo "⚠️  mini-services 可能启动失败，但继续运行..."
-    else
-        echo "✅ mini-services 已启动 (PID: $MINI_PID)"
-    fi
-elif [ -d "./mini-services-dist" ]; then
-    echo "⚠️  未找到 mini-services 启动脚本，但目录存在"
-else
-    echo "ℹ️  mini-services 目录不存在，跳过"
 fi
 
 # 启动 Caddy（如果存在 Caddyfile）

@@ -97,8 +97,8 @@ export default function AboutSection() {
                 boxShadow: `0 0 0 rgba(0,0,0,0)`,
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = `0 0 30px ${item.color}20`;
-                e.currentTarget.style.borderColor = `${item.color}40`;
+                e.currentTarget.style.boxShadow = `0 0 30px color-mix(in srgb, ${item.color} 12.5%, transparent)`;
+                e.currentTarget.style.borderColor = `color-mix(in srgb, ${item.color} 25%, transparent)`;
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.boxShadow = '0 0 0 rgba(0,0,0,0)';
@@ -107,7 +107,7 @@ export default function AboutSection() {
             >
               <div
                 className="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-3 transition-colors duration-300"
-                style={{ backgroundColor: `${item.color}15`, color: item.color }}
+                style={{ backgroundColor: `color-mix(in srgb, ${item.color} 10%, transparent)`, color: item.color }}
               >
                 {item.icon}
               </div>

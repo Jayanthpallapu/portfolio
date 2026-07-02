@@ -95,7 +95,7 @@ export default function Navigation() {
                   {activeSection === link.href.slice(1) && (
                     <motion.div
                       layoutId="activeNav"
-                      className="absolute inset-0 bg-white/5 rounded-lg border border-[#38bdf8]/20"
+                      className="absolute inset-0 bg-white/5 rounded-lg border border-primary/20"
                       transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                     />
                   )}
