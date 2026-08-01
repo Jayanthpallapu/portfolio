@@ -18,7 +18,22 @@ export async function POST(request: Request) {
       );
     }
 
-    const botToken = process.env.TELEGRAM_BOT_TOKEN || '8801370458:AAFJ9V5Uob-KzCFgwNyADNUPMie9vYP2m8I';
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email) || email.length > 254) {
+      return NextResponse.json(
+        { success: false, message: 'Invalid email address.' },
+        { status: 400 }
+      );
+    }
+
+    if (name.length > 100 || message.length > 3000) {
+      return NextResponse.json(
+        { success: false, message: 'Input payload exceeds maximum allowed limit.' },
+        { status: 400 }
+      );
+    }
+
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
     const chatId = process.env.TELEGRAM_CHAT_ID;
 
     if (!chatId) {
