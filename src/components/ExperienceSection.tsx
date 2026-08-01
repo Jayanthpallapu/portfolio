@@ -7,60 +7,87 @@ import SectionWrapper from './SectionWrapper';
 
 const experiences = [
   {
-    company: 'Matrimony.com',
-    role: 'Team Leader — Data Science',
-    duration: 'May 2025 — Nov 2025 | Chennai, India',
+    company: 'Quite Labs',
+    role: 'Data Science Manager',
+    duration: '11/2025 | Vishakapatanam',
     description:
-      'Supported classification and regression use cases by preparing high-quality analytical datasets, performing feature engineering, and validating data inputs for predictive modeling and inference.',
+      'Led AI strategy and deployment for clients by building multi-agent systems using CrewAI, LangChain, and LangGraph to automate workflows and improve efficiency.',
     achievements: [
-      'Prepared high-quality analytical datasets with rigorous feature engineering for predictive modeling',
-      'Analyzed system and operational performance metrics to identify optimization opportunities',
-      'Contributed insights that informed model evaluation criteria and business KPIs',
+      'Led AI strategy and deployment for clients by building multi-agent systems using CrewAI, LangChain, and LangGraph to automate workflows and improve efficiency',
+      'Developed an AI Researcher Agent that expanded a co-CEO team’s active funder pipeline from 1 to 20+ opportunities',
+      'Managed client engagement, solution architecture, and cross-functional collaboration',
     ],
-    tech: ['Python', 'Pandas', 'NumPy', 'Scikit-learn', 'SQL', 'A/B Testing'],
+    tech: ['CrewAI', 'LangChain', 'LangGraph', 'Multi-Agent AI', 'AI Strategy', 'Solution Architecture'],
     color: '#3b82f6',
   },
   {
-    company: 'Gusto Software Solutions Pvt, Ltd',
-    role: 'Team Lead — Data Science',
-    duration: 'May 2024 — May 2025 | Hyderabad, India',
+    company: 'Matrimony.com',
+    role: 'Team Leader',
+    duration: '05/2025 – 11/2025 | Chennai, India',
     description:
-      'Evaluated the impact of process changes by comparing pre- and post-implementation metrics, effectively supporting experimentation and continuous optimization initiatives.',
+      'Supported classification and regression initiatives by preparing analytical datasets, performing feature engineering, and validating data for predictive modeling.',
     achievements: [
-      'Managed and monitored ML model performance in production environments',
-      'Worked closely with product teams to evaluate statistical accuracy and error patterns',
-      'Identified high-impact use cases for continuous model improvement and optimization',
+      'Supported classification and regression initiatives by preparing analytical datasets, performing feature engineering, and validating data for predictive modeling',
+      'Analyzed system and operational performance metrics to identify optimization opportunities',
+      'Provided insights that supported model evaluation and business KPI improvements',
     ],
-    tech: ['Python', 'Machine Learning', 'SQL', 'Statistical Analysis', 'MLOps'],
+    tech: ['Python', 'Classification', 'Regression', 'Feature Engineering', 'KPI Metrics'],
+    color: '#38bdf8',
+  },
+  {
+    company: 'Gusto software solutions Pvt, Ltd',
+    role: 'Team Lead',
+    duration: '05/2024 – 05/2025 | Hyderabad, India',
+    description:
+      'Evaluated process improvements through pre- and post implementation metric analysis, supporting experimentation and continuous optimization initiatives.',
+    achievements: [
+      'Evaluated process improvements through pre- and post implementation metric analysis, supporting experimentation and continuous optimization initiatives',
+      'Monitored ML model performance in production by analyzing accuracy, error patterns, and real-world outcomes',
+      'Collaborated with product teams to identify opportunities for model enhancement and high-impact use cases',
+    ],
+    tech: ['ML Performance', 'Production Monitoring', 'Metric Analysis', 'Experimentation', 'Model Enhancement'],
     color: '#818cf8',
   },
   {
-    company: 'Concentrix Technologies Pvt Ltd',
+    company: 'Concentrix Technologies Pvt Ltd.',
     role: 'Technical Support Specialist',
-    duration: 'May 2023 — Apr 2024 | Bangalore, India',
+    duration: '05/2023 – 04/2024 | Bangalore, India',
     description:
-      'Prepared and validated infrastructure and support datasets for downstream analytical modeling by cleaning, structuring, and standardizing incident data.',
+      'Prepared and standardized infrastructure and support datasets for analytical modeling by cleaning and validating incident data.',
     achievements: [
-      'Analyzed large-scale support datasets to identify recurring issue patterns and trend deviations',
-      'Enabled data-backed recommendations to improve customer experience and system reliability',
-      'Identified frequency distributions and statistical anomalies in support data',
+      'Prepared and standardized infrastructure and support datasets for analytical modeling by cleaning and validating incident data',
+      'Analyzed large-scale support data to identify recurring issues, trends, and frequency patterns',
+      'Provided data-driven recommendations to enhance customer experience and improve system reliability',
     ],
-    tech: ['Python', 'SQL', 'Data Analysis', 'Statistical Summaries', 'Visualization'],
+    tech: ['Data Cleaning', 'Infrastructure Analytics', 'Incident Data Validation', 'Pattern Analysis'],
     color: '#06b6d4',
   },
   {
     company: 'IEnergizer Pvt Ltd',
     role: 'Customer Service Representative',
-    duration: 'Jun 2022 — Apr 2023 | Bangalore, India',
+    duration: '06/2022 – 04/2023 | Bangalore, India',
     description:
-      'Conducted analytical evaluation of customer order datasets to identify fraud patterns and anomalies, supporting reduction of false positives through quantitative analysis.',
+      'Analyzed customer order datasets to identify fraud patterns and anomalies, helping reduce false positives through data-driven insights.',
     achievements: [
-      'Developed and delivered Root Cause Analysis (RCA) reports using statistical summaries and data visualization',
-      'Identified fraud patterns and anomalies, reducing false positives through quantitative analysis',
-      'Collaborated with clients and internal teams to translate analytical findings into actionable insights',
+      'Analyzed customer order datasets to identify fraud patterns and anomalies, helping reduce false positives through data-driven insights',
+      'Created Root Cause Analysis (RCA) reports using statistical analysis, performance metrics, and data visualizations to support operational decision-making',
+      'Collaborated with clients and cross-functional teams to convert analytical findings into actionable business improvements',
     ],
-    tech: ['Python', 'Data Visualization', 'RCA', 'Quantitative Analysis', 'Reporting'],
-    color: '#38bdf8',
+    tech: ['Fraud Detection', 'Root Cause Analysis (RCA)', 'Statistical Analysis', 'Data Visualization', 'Anomaly Detection'],
+    color: '#60a5fa',
+  },
+];
+
+const educationList = [
+  {
+    degree: 'B.com Computer Applications',
+    institution: 'Sri Venkateswara University, Tirupathi',
+    date: '09/2022',
+  },
+  {
+    degree: 'Common Proficiency Test ( CPT )',
+    institution: 'Institute of Chartered accountants of India',
+    date: '06/2016 | Chennai',
   },
 ];
 
@@ -91,10 +118,10 @@ export default function ExperienceSection() {
         <div className="space-y-12">
           {experiences.map((exp, i) => (
             <motion.div
-              key={exp.company}
+              key={`${exp.company}-${exp.role}`}
               initial={{ opacity: 0, x: i % 2 === 0 ? -50 : 50 }}
               animate={isInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ delay: i * 0.3, duration: 0.7, ease: 'easeOut' }}
+              transition={{ delay: i * 0.2, duration: 0.7, ease: 'easeOut' }}
               className={`relative flex flex-col md:flex-row items-start gap-8 ${
                 i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
               }`}
@@ -176,24 +203,36 @@ export default function ExperienceSection() {
       </div>
 
       {/* Education Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.3, duration: 0.7 }}
-        className="mt-16 glass rounded-2xl p-6 max-w-2xl mx-auto"
-      >
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary">
-            <Briefcase size={20} />
-          </div>
-          <div>
-            <h3 className="text-white font-semibold text-lg">B.Com Computer Applications</h3>
-            <p className="text-primary text-sm font-medium">Sri Venkateswara University, Tirupathi</p>
-          </div>
+      <div className="mt-20">
+        <div className="text-center mb-8">
+          <h3 className="text-2xl font-bold text-white">
+            Education & <span className="text-[#38bdf8]">Qualifications</span>
+          </h3>
         </div>
-        <p className="text-gray-500 text-sm font-mono ml-13">Graduated: Sep 2022</p>
-      </motion.div>
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {educationList.map((edu) => (
+            <motion.div
+              key={edu.degree}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="glass rounded-2xl p-6 flex flex-col justify-between"
+            >
+              <div className="flex items-start gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary flex-shrink-0">
+                  <Briefcase size={20} />
+                </div>
+                <div>
+                  <h4 className="text-white font-semibold text-lg">{edu.degree}</h4>
+                  <p className="text-primary text-sm font-medium mt-1">{edu.institution}</p>
+                </div>
+              </div>
+              <p className="text-gray-500 text-sm font-mono self-end">{edu.date}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
     </SectionWrapper>
   );
 }

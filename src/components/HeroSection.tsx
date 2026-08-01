@@ -149,7 +149,7 @@ export default function HeroSection() {
             className="mb-4 w-full"
           >
             <h2 className="text-lg sm:text-xl md:text-2xl text-blue-100/70 font-medium">
-              Data Scientist
+              Applied AI Engineer & Data Science Manager
             </h2>
           </motion.div>
 
@@ -160,9 +160,9 @@ export default function HeroSection() {
             transition={{ delay: 0.7, duration: 0.6 }}
             className="text-blue-200/40 text-base md:text-lg max-w-xl mb-6 leading-relaxed text-center lg:text-left"
           >
-            Applying statistical analysis and machine learning to solve complex
-            product and business problems. Translating insights into measurable
-            product improvements at scale.
+            Specializing in architecting end-to-end AI solutions, multi-agent systems,
+            analytics pipelines, and predictive models to solve complex business challenges
+            and drive measurable ROI.
           </motion.p>
 
           {/* Interactive Lightning Hue Slider */}

@@ -8,26 +8,26 @@ import SectionWrapper from './SectionWrapper';
 const highlights = [
   {
     icon: <Brain size={28} />,
-    value: '3+',
-    label: 'Years in Data Science',
+    value: '5',
+    label: 'Companies / Roles',
     color: '#3b82f6',
   },
   {
     icon: <BarChart3 size={28} />,
-    value: '4',
-    label: 'Companies Worked',
+    value: 'Multi-Agent',
+    label: 'AI & Multi-Agent Systems',
     color: '#38bdf8',
   },
   {
     icon: <Database size={28} />,
     value: 'End-to-End',
-    label: 'Analytics Pipelines',
+    label: 'Analytics & ML Pipelines',
     color: '#818cf8',
   },
   {
     icon: <GitBranch size={28} />,
-    value: 'A/B Testing',
-    label: 'Experimentation Expert',
+    value: 'Measurable ROI',
+    label: 'Data Roadmaps & KPIs',
     color: '#06b6d4',
   },
 ];
@@ -61,25 +61,19 @@ export default function AboutSection() {
           transition={{ duration: 0.7 }}
           className="space-y-5"
         >
-          <p className="text-gray-300 leading-relaxed text-lg">
-            I&apos;m Jayanth Pallapu, a Data Scientist with strong experience applying
-            statistical analysis and machine learning to solve complex product and
-            business problems. I have a proven track record of building end-to-end
-            analytics pipelines, developing predictive models, running experiments
-            (A/B testing), and translating insights into measurable product improvements.
+          <p className="text-gray-300 leading-relaxed text-lg font-medium">
+            Results-driven Applied AI Engineer specializing in architecting end-to-end
+            AI solutions for complex business challenges.
           </p>
           <p className="text-gray-400 leading-relaxed">
-            I&apos;m experienced in collaborating with Product Managers, Engineers, and UX
-            teams to define success metrics, influence product direction, and drive
-            data-informed decisions at scale. My expertise spans from exploratory data
-            analysis and feature engineering to model deployment and performance monitoring
-            in production environments.
+            Skilled in deploying analytics pipelines and predictive models with strong evaluation
+            frameworks to maintain product performance. Collaborates with cross-functional
+            teams to translate data into actionable product roadmaps and measurable ROI,
+            effectively managing multiple high-priority initiatives in fast-paced environments.
           </p>
           <p className="text-gray-400 leading-relaxed">
-            With a solid foundation in Python, statistical inference, and machine learning,
-            I thrive on uncovering hidden patterns in data and turning them into actionable
-            strategies that create real business impact. I hold a B.Com in Computer
-            Applications from Sri Venkateswara University, Tirupathi.
+            Education background includes B.com Computer Applications from Sri Venkateswara University,
+            Tirupathi (09/2022) and Common Proficiency Test (CPT) from Institute of Chartered Accountants of India (06/2016 | Chennai).
           </p>
         </motion.div>
 

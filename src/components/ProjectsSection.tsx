@@ -7,45 +7,59 @@ import SectionWrapper from './SectionWrapper';
 
 const projects = [
   {
-    name: 'House Price Prediction Model',
+    name: 'Nvidia DriveSync',
     description:
-      'Developed an end-to-end predictive modeling pipeline in Python to estimate residential property values, beginning with rigorous Exploratory Data Analysis (EDA) to handle skewness, identify outliers, and map feature correlations.',
-    tech: ['Python', 'Pandas', 'NumPy', 'Scikit-learn', 'EDA', 'Feature Engineering'],
+      'Architected a multi-modal data curation and hybrid vector retrieval pipeline in Python for NVIDIA technical documentation using Qdrant, PyMuPDF, and Scrapy. Implemented dense and BM25 sparse vector search with Reciprocal Rank Fusion (RRF) deduplication to enable low-latency, context-rich retrieval for LLM agent workflows.',
+    tech: ['Python', 'Qdrant', 'PyMuPDF', 'Scrapy', 'RRF Search', 'BM25 Sparse'],
     color: '#3b82f6',
     github: 'https://github.com/Jayanthpallapu',
     live: '#',
     highlights: [
-      'Strategic imputation, One-Hot encoding, and feature scaling',
-      'Rigorous EDA for skewness and outlier detection',
-      'Feature correlation mapping and high-impact variable engineering',
+      'Multi-modal data curation & hybrid vector retrieval pipeline',
+      'Dense and BM25 sparse vector search with RRF deduplication',
+      'Low-latency, context-rich retrieval for LLM agent workflows',
     ],
   },
   {
-    name: 'Customer Churn Prediction ML Pipeline',
+    name: 'XAU/BTC Realtime Analysis',
     description:
-      'Engineered an end-to-end Customer Churn Prediction system using Python, beginning with rigorous EDA utilizing cohort analysis and feature interaction maps to identify key drivers of attrition.',
-    tech: ['Python', 'Apache Airflow', 'Streamlit', 'Scikit-learn', 'MLOps', 'SQL'],
+      'Built an enterprise-grade multi-agent AI platform utilizing CrewAI, Groq (Llama 3.3), FastAPI, and Next.js to automate gold market correlation research, news sentiment mining, and paper trading execution across 6 specialized autonomous agents. Integrated Model Context Protocol (MCP) with 25 tools, real-time WebSocket telemetry, Supabase database persistence, and self-healing supervisor auditing with live Telegram alerts.',
+    tech: ['CrewAI', 'Groq (Llama 3.3)', 'FastAPI', 'Next.js', 'MCP', 'Supabase', 'WebSockets'],
+    color: '#38bdf8',
+    github: 'https://github.com/Jayanthpallapu',
+    live: '#',
+    highlights: [
+      '6 specialized autonomous agents for market research & paper trading',
+      'Integrated Model Context Protocol (MCP) with 25 tools',
+      'Real-time WebSocket telemetry, Supabase persistence & live Telegram alerts',
+    ],
+  },
+  {
+    name: 'Customer-churn-prediction-ML-pipeline',
+    description:
+      'Engineered an end-to-end Customer Churn Prediction system in Python using EDA, cohort analysis, and feature engineering to identify key attrition drivers. Built an automated MLOps pipeline with Apache Airflow for ETL, data validation, model retraining, and real-time risk scoring, along with a Streamlit dashboard for retention insights.',
+    tech: ['Python', 'EDA', 'Cohort Analysis', 'Apache Airflow', 'MLOps', 'Streamlit'],
     color: '#818cf8',
     github: 'https://github.com/Jayanthpallapu',
     live: '#',
     highlights: [
-      'Automated MLOps pipeline with Apache Airflow',
-      'Daily ETL orchestration, data validation, and model retraining',
-      'Real-time risk scoring with Streamlit dashboard',
+      'EDA & cohort analysis for identifying key attrition drivers',
+      'Automated MLOps pipeline with Apache Airflow for ETL & retraining',
+      'Real-time risk scoring & Streamlit retention dashboard',
     ],
   },
   {
-    name: 'Lumina Code Suite',
+    name: 'House Price prediction model',
     description:
-      'A web application showcasing data science projects and analytics solutions. Features interactive dashboards and data visualization tools for business intelligence and reporting.',
-    tech: ['Python', 'Data Visualization', 'SQL', 'Statistics', 'Dashboard'],
+      'Developed an end-to-end predictive modeling pipeline in Python for residential property valuation, performing EDA, feature engineering, outlier handling, imputation, encoding, and feature scaling to prepare high-quality data for accurate model training and prediction.',
+    tech: ['Python', 'EDA', 'Feature Engineering', 'Outlier Handling', 'Imputation', 'Feature Scaling'],
     color: '#06b6d4',
     github: 'https://github.com/Jayanthpallapu',
-    live: 'https://lumina-code-suite.lovable.app',
+    live: '#',
     highlights: [
-      'Interactive analytics dashboards',
-      'Business intelligence reporting',
-      'Data visualization for stakeholder insights',
+      'End-to-end predictive modeling pipeline for property valuation',
+      'EDA, outlier handling, strategic imputation & One-Hot encoding',
+      'Rigorous feature scaling to prepare high-quality data for model training',
     ],
   },
 ];

@@ -17,47 +17,48 @@ interface SkillCategory {
 
 const skillCategories: SkillCategory[] = [
   {
-    title: 'Python & ML',
+    title: 'Core Competencies',
     color: '#3b82f6',
     skills: [
-      { name: 'Python', level: 95 },
-      { name: 'Pandas & NumPy', level: 93 },
-      { name: 'Scikit-learn', level: 90 },
-      { name: 'Exploratory Data Analysis', level: 92 },
-      { name: 'Supervised Learning', level: 88 },
+      { name: 'AI / ML Technologies', level: 96 },
+      { name: 'Python Programing', level: 95 },
+      { name: 'Complex problem solving expertise', level: 94 },
+      { name: 'Strategic & tactical planning', level: 92 },
+      { name: 'Leadership Skills', level: 90 },
+      { name: 'Collaboration skills', level: 95 },
     ],
   },
   {
-    title: 'Statistics',
-    color: '#818cf8',
-    skills: [
-      { name: 'Inferential Statistics', level: 90 },
-      { name: 'Hypothesis Testing', level: 88 },
-      { name: 'A/B Experimental Design', level: 85 },
-      { name: 'Regression Analysis', level: 87 },
-      { name: 'Probability Theory', level: 85 },
-    ],
-  },
-  {
-    title: 'Data & Databases',
-    color: '#06b6d4',
-    skills: [
-      { name: 'SQL', level: 92 },
-      { name: 'Data Wrangling', level: 90 },
-      { name: 'Database Management', level: 85 },
-      { name: 'Data Warehousing', level: 80 },
-      { name: 'ETL Pipelines', level: 82 },
-    ],
-  },
-  {
-    title: 'Tools & MLOps',
+    title: 'AI Architectures & Agents',
     color: '#38bdf8',
     skills: [
-      { name: 'Git & Version Control', level: 88 },
-      { name: 'Apache Airflow', level: 78 },
-      { name: 'Streamlit', level: 82 },
-      { name: 'Data Visualization', level: 85 },
-      { name: 'MLOps & Model Monitoring', level: 80 },
+      { name: 'CrewAI Multi-Agent Systems', level: 94 },
+      { name: 'LangChain & LangGraph', level: 92 },
+      { name: 'Groq (Llama 3.3)', level: 90 },
+      { name: 'Model Context Protocol (MCP)', level: 88 },
+      { name: 'Qdrant Vector Retrieval', level: 90 },
+    ],
+  },
+  {
+    title: 'Analytics & Modeling',
+    color: '#818cf8',
+    skills: [
+      { name: 'Exploratory Data Analysis (EDA)', level: 95 },
+      { name: 'Feature Engineering & Imputation', level: 93 },
+      { name: 'Classification & Regression', level: 92 },
+      { name: 'Root Cause Analysis (RCA)', level: 90 },
+      { name: 'Fraud & Anomaly Detection', level: 88 },
+    ],
+  },
+  {
+    title: 'MLOps, ETL & Web Stack',
+    color: '#06b6d4',
+    skills: [
+      { name: 'FastAPI & Next.js', level: 92 },
+      { name: 'Apache Airflow (ETL)', level: 86 },
+      { name: 'Streamlit & Dashboards', level: 88 },
+      { name: 'Dense & BM25 Vector Retrieval (RRF)', level: 90 },
+      { name: 'WebSocket Telemetry & Supabase', level: 88 },
     ],
   },
 ];
@@ -97,7 +98,7 @@ function SkillBar({ skill, color, delay }: { skill: Skill; color: string; delay:
 }
 
 export default function SkillsSection() {
-  const [activeCategory, setActiveCategory] = useState<string>('Python & ML');
+  const [activeCategory, setActiveCategory] = useState<string>('Core Competencies');
   const gridRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(gridRef, { once: true, margin: '-50px' });
 
@@ -112,7 +113,7 @@ export default function SkillsSection() {
           viewport={{ once: true }}
           className="text-[#38bdf8] text-sm font-mono tracking-wider uppercase mb-3"
         >
-          Technologies I work with
+          Technologies & Competencies
         </motion.p>
         <h2 className="text-3xl md:text-4xl font-bold text-white">
           Skills & <span className="text-[#38bdf8] glow-text-blue">Expertise</span>
@@ -166,13 +167,14 @@ export default function SkillsSection() {
           transition={{ delay: 0.5 }}
           className="mt-12 text-center"
         >
-          <p className="text-gray-500 text-sm mb-4">Also experienced with</p>
+          <p className="text-gray-500 text-sm mb-4">Core Resume Competencies & Tooling</p>
           <div className="flex flex-wrap justify-center gap-2">
             {[
-              'Predictive Modeling', 'Feature Engineering', 'Cohort Analysis',
-              'Root Cause Analysis', 'Data Cleaning', 'One-Hot Encoding',
-              'Model Evaluation', 'Business KPIs', 'Fraud Detection',
-              'Anomaly Detection', 'Stakeholder Reporting', 'Cross-functional Collaboration',
+              'Python Programing', 'Strategic & tactical planning', 'Leadership Skills',
+              'Complex problem solving expertise', 'Collaboration skills', 'AI / ML Technologies',
+              'CrewAI', 'LangChain', 'LangGraph', 'Qdrant', 'PyMuPDF', 'Scrapy',
+              'Groq (Llama 3.3)', 'FastAPI', 'Next.js', 'Model Context Protocol (MCP)',
+              'Supabase', 'Apache Airflow', 'Streamlit', 'Reciprocal Rank Fusion (RRF)',
             ].map((skill) => (
               <span
                 key={skill}

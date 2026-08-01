@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { Send, Github, Linkedin, Mail, MapPin, Phone, CheckCircle, AlertCircle } from 'lucide-react';
+import { Send, Github, Linkedin, Mail, MapPin, Phone, Globe, CheckCircle, AlertCircle } from 'lucide-react';
 import SectionWrapper from './SectionWrapper';
 
 const contactInfo = [
@@ -26,6 +26,13 @@ const contactInfo = [
     value: '+91 8105014369',
     href: 'tel:+918105014369',
     color: '#06b6d4',
+  },
+  {
+    icon: <Globe size={20} />,
+    label: 'Portfolio',
+    value: 'portfolio-blush-five-kaaocyfztr.vercel.app',
+    href: 'https://portfolio-blush-five-kaaocyfztr.vercel.app',
+    color: '#38bdf8',
   },
 ];
 

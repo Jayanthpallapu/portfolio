@@ -14,30 +14,33 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Jayanth Pallapu | Full Stack Developer & Software Engineer",
+  title: "Jayanth Pallapu | Applied AI Engineer & Data Science Manager",
   description:
-    "Portfolio of Jayanth Pallapu — a passionate Full Stack Developer with expertise in building scalable web applications and creating seamless user experiences.",
+    "Portfolio of Jayanth Pallapu — Applied AI Engineer specializing in architecting end-to-end AI solutions, multi-agent systems, analytics pipelines, and predictive models.",
   keywords: [
     "Jayanth Pallapu",
-    "Full Stack Developer",
-    "Software Engineer",
-    "React",
-    "Next.js",
-    "TypeScript",
+    "Applied AI Engineer",
+    "Data Science Manager",
+    "Multi-agent AI",
+    "Machine Learning",
+    "Python",
+    "CrewAI",
+    "LangChain",
+    "LangGraph",
     "Portfolio",
   ],
   authors: [{ name: "Jayanth Pallapu" }],
   openGraph: {
-    title: "Jayanth Pallapu | Full Stack Developer",
+    title: "Jayanth Pallapu | Applied AI Engineer & Data Science Manager",
     description:
-      "Passionate Full Stack Developer building scalable web applications and seamless user experiences.",
+      "Applied AI Engineer specializing in architecting end-to-end AI solutions, multi-agent systems, and predictive models.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Jayanth Pallapu | Full Stack Developer",
+    title: "Jayanth Pallapu | Applied AI Engineer & Data Science Manager",
     description:
-      "Passionate Full Stack Developer building scalable web applications and seamless user experiences.",
+      "Applied AI Engineer specializing in architecting end-to-end AI solutions, multi-agent systems, and predictive models.",
   },
 };
 
