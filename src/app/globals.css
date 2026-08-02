@@ -164,7 +164,7 @@ input[type="range"]::-moz-range-thumb {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0a1a;
+  background: #000000;
 }
 ::-webkit-scrollbar-thumb {
   background: rgba(0, 212, 255, 0.3);
@@ -172,6 +172,12 @@ input[type="range"]::-moz-range-thumb {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 212, 255, 0.5);
+}
+
+/* GPU Performance & Layout Isolation */
+section {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 700px;
 }
 
 /* Glow utilities */

@@ -2,17 +2,6 @@
 
 import { useEffect, useRef } from 'react';
 
-/**
- * Animated Section Backgrounds — Dots Only, No Lines
- * Each section has uniquely animated dot particles:
- *
- * 1. "constellation" — About: Floating wandering dots with proximity glow
- * 2. "data-stream" — Experience: Falling/rising dot particles with trails
- * 3. "circuit" — Projects: Grid-aligned pulsing dots with random energy sparks
- * 4. "neural" — Skills: Layered oscillating dots with orbiting sparks
- * 5. "aurora" — Contact: Drifting luminous dots with breath-sync
- */
-
 export type BackgroundVariant = 'constellation' | 'data-stream' | 'circuit' | 'neural' | 'aurora';
 
 interface SectionBackgroundProps {
@@ -41,12 +30,6 @@ const hslToRgb = (h: number, s: number, l: number) => {
   };
 };
 
-const getThemeHue = () => {
-  if (typeof window === 'undefined') return 200;
-  const val = getComputedStyle(document.documentElement).getPropertyValue('--theme-hue');
-  return val ? parseInt(val.trim(), 10) : 200;
-};
-
 function drawGlowDot(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -56,12 +39,12 @@ function drawGlowDot(
   g: number,
   b: number,
   alpha: number,
-  glowMultiplier: number = 4
+  glowMultiplier: number = 3
 ) {
   // Outer glow
   const grad = ctx.createRadialGradient(x, y, 0, x, y, radius * glowMultiplier);
-  grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${alpha * 0.5})`);
-  grad.addColorStop(0.4, `rgba(${r}, ${g}, ${b}, ${alpha * 0.15})`);
+  grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${alpha * 0.4})`);
+  grad.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, ${alpha * 0.1})`);
   grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
   ctx.beginPath();
   ctx.arc(x, y, radius * glowMultiplier, 0, Math.PI * 2);
@@ -73,14 +56,6 @@ function drawGlowDot(
   ctx.arc(x, y, radius, 0, Math.PI * 2);
   ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
   ctx.fill();
-
-  // Bright center
-  if (radius > 1.5) {
-    ctx.beginPath();
-    ctx.arc(x, y, radius * 0.4, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(${Math.min(r + 80, 255)}, ${Math.min(g + 80, 255)}, ${Math.min(b + 60, 255)}, ${alpha * 0.8})`;
-    ctx.fill();
-  }
 }
 
 // ==================== CONSTELLATION (About) ====================
@@ -97,8 +72,6 @@ interface Dot {
   orbitRadius: number;
   orbitSpeed: number;
   orbitPhase: number;
-  baseX: number;
-  baseY: number;
 }
 
 function initDots(w: number, h: number, count: number, colors: HslColor[]): Dot[] {
@@ -109,34 +82,26 @@ function initDots(w: number, h: number, count: number, colors: HslColor[]): Dot[
     const color = colors[Math.floor(Math.random() * colors.length)];
     dots.push({
       x, y,
-      vx: (Math.random() - 0.5) * 0.4,
-      vy: (Math.random() - 0.5) * 0.4,
-      radius: 1.5 + Math.random() * 3,
-      baseAlpha: 0.25 + Math.random() * 0.5,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      radius: 1.5 + Math.random() * 2.5,
+      baseAlpha: 0.25 + Math.random() * 0.4,
       pulsePhase: Math.random() * Math.PI * 2,
       pulseSpeed: 0.001 + Math.random() * 0.003,
       color,
-      orbitRadius: Math.random() < 0.3 ? 5 + Math.random() * 20 : 0,
+      orbitRadius: Math.random() < 0.3 ? 5 + Math.random() * 15 : 0,
       orbitSpeed: 0.001 + Math.random() * 0.003,
       orbitPhase: Math.random() * Math.PI * 2,
-      baseX: x,
-      baseY: y,
     });
   }
   return dots;
 }
 
-function drawConstellation(canvas: HTMLCanvasElement, dots: Dot[], time: number, themeHue: number) {
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-  const w = canvas.width;
-  const h = canvas.height;
-
+function drawConstellation(ctx: CanvasRenderingContext2D, w: number, h: number, dots: Dot[], time: number, themeHue: number) {
   ctx.fillStyle = '#000000';
   ctx.fillRect(0, 0, w, h);
 
   for (const dot of dots) {
-    // Move freely
     dot.x += dot.vx;
     dot.y += dot.vy;
     if (dot.x < -20) dot.x = w + 20;
@@ -144,7 +109,6 @@ function drawConstellation(canvas: HTMLCanvasElement, dots: Dot[], time: number,
     if (dot.y < -20) dot.y = h + 20;
     if (dot.y > h + 20) dot.y = -20;
 
-    // Add orbit wobble for some dots
     let drawX = dot.x;
     let drawY = dot.y;
     if (dot.orbitRadius > 0) {
@@ -152,31 +116,12 @@ function drawConstellation(canvas: HTMLCanvasElement, dots: Dot[], time: number,
       drawY += Math.cos(time * dot.orbitSpeed * 0.7 + dot.orbitPhase) * dot.orbitRadius * 0.6;
     }
 
-    // Animated pulse
-    const pulse = 1 + 0.5 * Math.sin(time * dot.pulseSpeed + dot.pulsePhase);
+    const pulse = 1 + 0.4 * Math.sin(time * dot.pulseSpeed + dot.pulsePhase);
     const alpha = dot.baseAlpha * pulse;
-    const r = dot.radius * (0.8 + 0.4 * Math.sin(time * dot.pulseSpeed * 1.5 + dot.pulsePhase));
-
-    // Proximity glow — brighter when near other dots
-    let proximityBoost = 0;
-    for (const other of dots) {
-      if (other === dot) continue;
-      const dx = drawX - other.x;
-      const dy = drawY - other.y;
-      const dist = dx * dx + dy * dy;
-      if (dist < 22500) { // 150px squared
-        proximityBoost += (1 - Math.sqrt(dist) / 150) * 0.15;
-      }
-    }
+    const r = dot.radius * (0.8 + 0.3 * Math.sin(time * dot.pulseSpeed * 1.5 + dot.pulsePhase));
 
     const rgb = hslToRgb(themeHue + dot.color.hOffset, dot.color.s, dot.color.l);
-    drawGlowDot(
-      ctx, drawX, drawY,
-      Math.max(r, 0.5),
-      rgb.r, rgb.g, rgb.b,
-      Math.min(alpha + proximityBoost, 1),
-      4
-    );
+    drawGlowDot(ctx, drawX, drawY, Math.max(r, 0.5), rgb.r, rgb.g, rgb.b, alpha, 3);
   }
 }
 
@@ -192,20 +137,14 @@ interface StreamDot {
   pulseSpeed: number;
   drift: number;
   driftSpeed: number;
-  trail: { x: number; y: number; alpha: number }[];
+  trail: { x: number; y: number }[];
 }
 
-function drawDataStream(canvas: HTMLCanvasElement, dots: StreamDot[], time: number, themeHue: number) {
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-  const w = canvas.width;
-  const h = canvas.height;
-
+function drawDataStream(ctx: CanvasRenderingContext2D, w: number, h: number, dots: StreamDot[], time: number, themeHue: number) {
   ctx.fillStyle = '#000000';
   ctx.fillRect(0, 0, w, h);
 
   for (const dot of dots) {
-    // Fall downward
     dot.y += dot.speed;
     dot.x += Math.sin(time * dot.driftSpeed + dot.pulsePhase) * dot.drift;
 
@@ -217,26 +156,22 @@ function drawDataStream(canvas: HTMLCanvasElement, dots: StreamDot[], time: numb
 
     const rgb = hslToRgb(themeHue + dot.color.hOffset, dot.color.s, dot.color.l);
 
-    // Update trail
-    dot.trail.push({ x: dot.x, y: dot.y, alpha: dot.baseAlpha * 0.4 });
-    if (dot.trail.length > 8) dot.trail.shift();
+    dot.trail.push({ x: dot.x, y: dot.y });
+    if (dot.trail.length > 5) dot.trail.shift();
 
-    // Draw trail (fading dots, no lines)
     for (let i = 0; i < dot.trail.length; i++) {
       const t = dot.trail[i];
-      const trailAlpha = t.alpha * (i / dot.trail.length) * 0.5;
-      const trailR = dot.radius * (0.3 + 0.7 * (i / dot.trail.length));
+      const trailAlpha = dot.baseAlpha * (i / dot.trail.length) * 0.3;
       ctx.beginPath();
-      ctx.arc(t.x, t.y, Math.max(trailR, 0.3), 0, Math.PI * 2);
+      ctx.arc(t.x, t.y, Math.max(dot.radius * 0.5, 0.3), 0, Math.PI * 2);
       ctx.fillStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${trailAlpha})`;
       ctx.fill();
     }
 
-    // Animated pulse
-    const pulse = 1 + 0.4 * Math.sin(time * dot.pulseSpeed + dot.pulsePhase);
+    const pulse = 1 + 0.3 * Math.sin(time * dot.pulseSpeed + dot.pulsePhase);
     const alpha = dot.baseAlpha * pulse;
 
-    drawGlowDot(ctx, dot.x, dot.y, dot.radius, rgb.r, rgb.g, rgb.b, alpha, 5);
+    drawGlowDot(ctx, dot.x, dot.y, dot.radius, rgb.r, rgb.g, rgb.b, alpha, 4);
   }
 }
 
@@ -267,46 +202,26 @@ interface SparkDot {
 }
 
 function drawCircuit(
-  canvas: HTMLCanvasElement,
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
   dots: CircuitDot[],
   sparks: SparkDot[],
   time: number,
   themeHue: number
 ) {
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-  const w = canvas.width;
-  const h = canvas.height;
-
   ctx.fillStyle = '#000000';
   ctx.fillRect(0, 0, w, h);
 
-  // Draw static dots with expanding ring animation
   for (const dot of dots) {
-    const pulse = 1 + 0.5 * Math.sin(time * dot.pulseSpeed + dot.pulsePhase);
+    const pulse = 1 + 0.4 * Math.sin(time * dot.pulseSpeed + dot.pulsePhase);
     const alpha = dot.baseAlpha * pulse;
     const r = dot.baseRadius * pulse;
 
     const rgb = hslToRgb(themeHue + dot.color.hOffset, dot.color.s, dot.color.l);
-    drawGlowDot(ctx, dot.x, dot.y, Math.max(r, 0.5), rgb.r, rgb.g, rgb.b, alpha, 4);
-
-    // Expanding ripple dots (instead of ring stroke)
-    const ringProgress = ((time * dot.ringSpeed + dot.ringPhase) % 1);
-    const ringRadius = dot.baseRadius + ringProgress * dot.ringMaxRadius;
-    const ringAlpha = (1 - ringProgress) * 0.2;
-    const rippleDotCount = 8;
-    for (let d = 0; d < rippleDotCount; d++) {
-      const angle = (d / rippleDotCount) * Math.PI * 2 + time * 0.001;
-      const rx = dot.x + Math.cos(angle) * ringRadius;
-      const ry = dot.y + Math.sin(angle) * ringRadius;
-      ctx.beginPath();
-      ctx.arc(rx, ry, Math.max(0.8, 0.8), 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${ringAlpha})`;
-      ctx.fill();
-    }
+    drawGlowDot(ctx, dot.x, dot.y, Math.max(r, 0.5), rgb.r, rgb.g, rgb.b, alpha, 3);
   }
 
-  // Update & draw sparks
   for (let i = sparks.length - 1; i >= 0; i--) {
     const spark = sparks[i];
     spark.x += spark.vx;
@@ -314,25 +229,29 @@ function drawCircuit(
     spark.vx *= 0.98;
     spark.vy *= 0.98;
     spark.life--;
-    spark.alpha = (spark.life / spark.maxLife) * 0.8;
+    spark.alpha = (spark.life / spark.maxLife) * 0.7;
 
     if (spark.life <= 0) {
-      // Respawn from a random dot
-      const parentDot = dots[Math.floor(Math.random() * dots.length)];
-      const angle = Math.random() * Math.PI * 2;
-      const speed = 0.5 + Math.random() * 1.5;
-      spark.x = parentDot.x;
-      spark.y = parentDot.y;
-      spark.vx = Math.cos(angle) * speed;
-      spark.vy = Math.sin(angle) * speed;
-      spark.life = 40 + Math.floor(Math.random() * 60);
-      spark.maxLife = spark.life;
-      spark.color = parentDot.color;
+      if (dots.length > 0) {
+        const parentDot = dots[Math.floor(Math.random() * dots.length)];
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 0.5 + Math.random() * 1.2;
+        spark.x = parentDot.x;
+        spark.y = parentDot.y;
+        spark.vx = Math.cos(angle) * speed;
+        spark.vy = Math.sin(angle) * speed;
+        spark.life = 30 + Math.floor(Math.random() * 40);
+        spark.maxLife = spark.life;
+        spark.color = parentDot.color;
+      }
       continue;
     }
 
     const sparkRgb = hslToRgb(themeHue + spark.color.hOffset, spark.color.s, spark.color.l);
-    drawGlowDot(ctx, spark.x, spark.y, Math.max(spark.radius, 0.3), sparkRgb.r, sparkRgb.g, sparkRgb.b, spark.alpha, 3);
+    ctx.beginPath();
+    ctx.arc(spark.x, spark.y, Math.max(spark.radius, 0.5), 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${sparkRgb.r}, ${sparkRgb.g}, ${sparkRgb.b}, ${spark.alpha})`;
+    ctx.fill();
   }
 }
 
@@ -362,28 +281,21 @@ interface OrbitSpark {
   color: HslColor;
 }
 
-function drawNeural(canvas: HTMLCanvasElement, dots: NeuralDot[], time: number, themeHue: number) {
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-  const w = canvas.width;
-  const h = canvas.height;
-
+function drawNeural(ctx: CanvasRenderingContext2D, w: number, h: number, dots: NeuralDot[], time: number, themeHue: number) {
   ctx.fillStyle = '#000000';
   ctx.fillRect(0, 0, w, h);
 
   for (const dot of dots) {
-    // Oscillate position
     dot.x = dot.baseX + Math.sin(time * dot.oscillateSpeedX + dot.pulsePhase) * dot.oscillateAmplitude;
     dot.y = dot.baseY + Math.cos(time * dot.oscillateSpeedY + dot.pulsePhase * 1.3) * dot.oscillateAmplitude * 0.7;
 
-    const pulse = 1 + 0.6 * Math.sin(time * dot.pulseSpeed + dot.pulsePhase);
+    const pulse = 1 + 0.4 * Math.sin(time * dot.pulseSpeed + dot.pulsePhase);
     const alpha = dot.baseAlpha * pulse;
-    const r = dot.radius * (0.7 + 0.5 * Math.sin(time * dot.pulseSpeed * 1.2 + dot.pulsePhase));
+    const r = dot.radius * (0.8 + 0.3 * Math.sin(time * dot.pulseSpeed * 1.2 + dot.pulsePhase));
 
     const rgb = hslToRgb(themeHue + dot.color.hOffset, dot.color.s, dot.color.l);
-    drawGlowDot(ctx, dot.x, dot.y, Math.max(r, 0.5), rgb.r, rgb.g, rgb.b, alpha, 4);
+    drawGlowDot(ctx, dot.x, dot.y, Math.max(r, 0.5), rgb.r, rgb.g, rgb.b, alpha, 3);
 
-    // Draw orbiting sparks
     for (const orbit of dot.orbitDots) {
       orbit.angle += orbit.speed;
       const ox = dot.x + Math.cos(orbit.angle) * orbit.distance;
@@ -394,15 +306,6 @@ function drawNeural(canvas: HTMLCanvasElement, dots: NeuralDot[], time: number, 
       ctx.beginPath();
       ctx.arc(ox, oy, Math.max(orbit.radius, 0.3), 0, Math.PI * 2);
       ctx.fillStyle = `rgba(${orbitRgb.r}, ${orbitRgb.g}, ${orbitRgb.b}, ${oAlpha})`;
-      ctx.fill();
-
-      // Tiny glow
-      const oGrad = ctx.createRadialGradient(ox, oy, 0, ox, oy, orbit.radius * 4);
-      oGrad.addColorStop(0, `rgba(${orbitRgb.r}, ${orbitRgb.g}, ${orbitRgb.b}, ${oAlpha * 0.3})`);
-      oGrad.addColorStop(1, `rgba(${orbitRgb.r}, ${orbitRgb.g}, ${orbitRgb.b}, 0)`);
-      ctx.beginPath();
-      ctx.arc(ox, oy, orbit.radius * 4, 0, Math.PI * 2);
-      ctx.fillStyle = oGrad;
       ctx.fill();
     }
   }
@@ -427,45 +330,23 @@ interface AuroraDot {
   sizeOscPhase: number;
 }
 
-function drawAurora(canvas: HTMLCanvasElement, dots: AuroraDot[], time: number, themeHue: number) {
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-  const w = canvas.width;
-  const h = canvas.height;
-
+function drawAurora(ctx: CanvasRenderingContext2D, w: number, h: number, dots: AuroraDot[], time: number, themeHue: number) {
   ctx.fillStyle = '#000000';
   ctx.fillRect(0, 0, w, h);
 
-  // Subtle ambient gradient glow (no lines)
-  ctx.globalCompositeOperation = 'screen';
-  const ambientGrad = ctx.createRadialGradient(w * 0.5, h * 0.4, 0, w * 0.5, h * 0.4, Math.max(w, h) * 0.5);
-  const color1 = hslToRgb(themeHue + 60, 90, 74);
-  const color2 = hslToRgb(themeHue - 20, 91, 60);
-  ambientGrad.addColorStop(0, `rgba(${color1.r}, ${color1.g}, ${color1.b}, 0.03)`);
-  ambientGrad.addColorStop(0.5, `rgba(${color2.r}, ${color2.g}, ${color2.b}, 0.015)`);
-  ambientGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-  ctx.fillStyle = ambientGrad;
-  ctx.fillRect(0, 0, w, h);
-  ctx.globalCompositeOperation = 'source-over';
-
   for (const dot of dots) {
-    // Gentle drift
-    dot.x = dot.baseX + Math.sin(time * dot.driftSpeedX + dot.pulsePhase) * 30
-                     + Math.sin(time * dot.driftSpeedX * 0.3 + dot.breathPhase) * 15;
-    dot.y = dot.baseY + Math.cos(time * dot.driftSpeedY + dot.pulsePhase * 1.2) * 20
-                     + Math.cos(time * dot.driftSpeedY * 0.5 + dot.breathPhase) * 10;
+    dot.x = dot.baseX + Math.sin(time * dot.driftSpeedX + dot.pulsePhase) * 20;
+    dot.y = dot.baseY + Math.cos(time * dot.driftSpeedY + dot.pulsePhase * 1.2) * 15;
 
-    // Breath-sync alpha
     const breath = 0.5 + 0.5 * Math.sin(time * dot.breathSpeed + dot.breathPhase);
-    const pulse = 1 + 0.4 * Math.sin(time * dot.pulseSpeed + dot.pulsePhase);
+    const pulse = 1 + 0.3 * Math.sin(time * dot.pulseSpeed + dot.pulsePhase);
     const alpha = dot.baseAlpha * breath * pulse;
 
-    // Size oscillation
-    const sizeOsc = 1 + 0.3 * Math.sin(time * dot.sizeOscSpeed + dot.sizeOscPhase);
+    const sizeOsc = 1 + 0.2 * Math.sin(time * dot.sizeOscSpeed + dot.sizeOscPhase);
     const r = dot.radius * sizeOsc;
 
     const rgb = hslToRgb(themeHue + dot.color.hOffset, dot.color.s, dot.color.l);
-    drawGlowDot(ctx, dot.x, dot.y, Math.max(r, 0.5), rgb.r, rgb.g, rgb.b, alpha, 5);
+    drawGlowDot(ctx, dot.x, dot.y, Math.max(r, 0.5), rgb.r, rgb.g, rgb.b, alpha, 4);
   }
 }
 
@@ -475,9 +356,16 @@ export default function SectionBackground({ variant }: SectionBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>(0);
   const timeRef = useRef<number>(0);
-  const initRef = useRef(false);
+  const lastTimeRef = useRef<number>(0);
+  const cachedHueRef = useRef<number>(200);
+  const isVisibleRef = useRef<boolean>(true);
 
-  // State refs
+  // Gradient overlay caches
+  const vignetteGradRef = useRef<CanvasGradient | null>(null);
+  const topFadeRef = useRef<CanvasGradient | null>(null);
+  const bottomFadeRef = useRef<CanvasGradient | null>(null);
+
+  // Particle state refs
   const constellationDotsRef = useRef<Dot[]>([]);
   const dataStreamDotsRef = useRef<StreamDot[]>([]);
   const circuitDotsRef = useRef<CircuitDot[]>([]);
@@ -489,263 +377,277 @@ export default function SectionBackground({ variant }: SectionBackgroundProps) {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: false });
     if (!ctx) return;
 
-    const resize = () => {
-      const rect = canvas.parentElement?.getBoundingClientRect();
-      if (rect) {
-        canvas.width = rect.width;
-        canvas.height = rect.height;
-      }
-    };
-    resize();
-    window.addEventListener('resize', resize);
+    // IntersectionObserver to pause animation when offscreen
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isVisibleRef.current = entry.isIntersecting;
+        });
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(canvas);
 
-    const w = () => canvas.width;
-    const h = () => canvas.height;
-
-    if (!initRef.current) {
-      initRef.current = true;
-
-      // ===== CONSTELLATION =====
-      if (variant === 'constellation') {
-        const colors: HslColor[] = [
-          { hOffset: 60, s: 90, l: 74 }, // indigo
-          { hOffset: 60, s: 84, l: 67 }, // violet
-          { hOffset: 60, s: 89, l: 82 }, // light indigo
-          { hOffset: 0, s: 93, l: 60 },  // sky
-        ];
-        const count = Math.max(Math.floor((w() * h()) / 8000), 40);
-        constellationDotsRef.current = initDots(w(), h(), count, colors);
-      }
-
-      // ===== DATA STREAM =====
-      if (variant === 'data-stream') {
-        const colors: HslColor[] = [
-          { hOffset: 15, s: 94, l: 43 },  // cyan
-          { hOffset: -20, s: 91, l: 60 }, // blue
-          { hOffset: 60, s: 90, l: 74 },  // indigo
-          { hOffset: 0, s: 93, l: 60 },   // sky
-        ];
-        const count = Math.max(Math.floor(w() / 25), 30);
-        const dots: StreamDot[] = [];
-        for (let i = 0; i < count; i++) {
-          dots.push({
-            x: Math.random() * w(),
-            y: Math.random() * h(),
-            speed: 0.2 + Math.random() * 0.8,
-            radius: 1.5 + Math.random() * 3,
-            baseAlpha: 0.2 + Math.random() * 0.5,
-            color: colors[Math.floor(Math.random() * colors.length)],
-            pulsePhase: Math.random() * Math.PI * 2,
-            pulseSpeed: 0.001 + Math.random() * 0.003,
-            drift: 0.3 + Math.random() * 0.5,
-            driftSpeed: 0.0005 + Math.random() * 0.001,
-            trail: [],
-          });
-        }
-        dataStreamDotsRef.current = dots;
-      }
-
-      // ===== CIRCUIT =====
-      if (variant === 'circuit') {
-        const colors: HslColor[] = [
-          { hOffset: 15, s: 94, l: 43 },  // cyan
-          { hOffset: -20, s: 91, l: 60 }, // blue
-          { hOffset: 0, s: 93, l: 60 },   // sky
-          { hOffset: 60, s: 90, l: 74 },  // indigo
-        ];
-        const cols = Math.floor(w() / 70);
-        const rows = Math.floor(h() / 70);
-        const dots: CircuitDot[] = [];
-
-        for (let row = 0; row < rows; row++) {
-          for (let col = 0; col < cols; col++) {
-            if (Math.random() < 0.25) continue; // skip some
-            const jx = (Math.random() - 0.5) * 25;
-            const jy = (Math.random() - 0.5) * 25;
-            dots.push({
-              x: col * 70 + 35 + jx,
-              y: row * 70 + 35 + jy,
-              baseRadius: 2 + Math.random() * 3,
-              baseAlpha: 0.2 + Math.random() * 0.4,
-              pulsePhase: Math.random() * Math.PI * 2,
-              pulseSpeed: 0.001 + Math.random() * 0.003,
-              color: colors[Math.floor(Math.random() * colors.length)],
-              ringPhase: Math.random(),
-              ringSpeed: 0.0005 + Math.random() * 0.001,
-              ringMaxRadius: 15 + Math.random() * 25,
-            });
-          }
-        }
-        circuitDotsRef.current = dots;
-
-        // Init sparks
-        const sparks: SparkDot[] = [];
-        for (let i = 0; i < Math.min(15, dots.length / 2); i++) {
-          const parent = dots[Math.floor(Math.random() * dots.length)];
-          const angle = Math.random() * Math.PI * 2;
-          const speed = 0.5 + Math.random() * 1.5;
-          sparks.push({
-            x: parent.x,
-            y: parent.y,
-            vx: Math.cos(angle) * speed,
-            vy: Math.sin(angle) * speed,
-            radius: 1 + Math.random() * 1.5,
-            alpha: 0.6,
-            color: parent.color,
-            life: 40 + Math.floor(Math.random() * 60),
-            maxLife: 100,
-          });
-        }
-        circuitSparksRef.current = sparks;
-      }
-
-      // ===== NEURAL =====
-      if (variant === 'neural') {
-        const colors: HslColor[] = [
-          { hOffset: 0, s: 93, l: 60 },   // sky
-          { hOffset: 60, s: 90, l: 74 },  // indigo
-          { hOffset: 60, s: 84, l: 67 },  // violet
-          { hOffset: -20, s: 91, l: 60 }, // blue
-        ];
-        const layers = 5;
-        const nodesPerLayer = Math.floor(h() / 90);
-        const dots: NeuralDot[] = [];
-
-        for (let l = 0; l < layers; l++) {
-          const count = Math.max(nodesPerLayer - Math.abs(l - Math.floor(layers / 2)) * 2, 3);
-          for (let n = 0; n < count; n++) {
-            const baseX = (w() / (layers + 1)) * (l + 1);
-            const baseY = (h() / (count + 1)) * (n + 1);
-            const color = colors[Math.floor(Math.random() * colors.length)];
-
-            // Create 1-3 orbiting sparks
-            const orbitDots: OrbitSpark[] = [];
-            const numOrbits = 1 + Math.floor(Math.random() * 3);
-            for (let o = 0; o < numOrbits; o++) {
-              orbitDots.push({
-                angle: Math.random() * Math.PI * 2,
-                speed: 0.01 + Math.random() * 0.03,
-                radius: 0.8 + Math.random() * 1.2,
-                distance: 8 + Math.random() * 18,
-                alpha: 0.3 + Math.random() * 0.4,
-                color: {
-                  hOffset: color.hOffset,
-                  s: color.s,
-                  l: Math.min(color.l + 10, 100),
-                },
-              });
-            }
-
-            dots.push({
-              x: baseX, y: baseY,
-              baseX, baseY,
-              radius: 3 + Math.random() * 4,
-              baseAlpha: 0.2 + Math.random() * 0.4,
-              pulsePhase: Math.random() * Math.PI * 2,
-              pulseSpeed: 0.001 + Math.random() * 0.003,
-              color,
-              oscillateAmplitude: 5 + Math.random() * 12,
-              oscillateSpeedX: 0.0003 + Math.random() * 0.0008,
-              oscillateSpeedY: 0.0004 + Math.random() * 0.0006,
-              orbitDots,
-            });
-          }
-        }
-        neuralDotsRef.current = dots;
-      }
-
-      // ===== AURORA =====
-      if (variant === 'aurora') {
-        const colors: HslColor[] = [
-          { hOffset: -20, s: 91, l: 60 }, // blue
-          { hOffset: 60, s: 90, l: 74 },  // indigo
-          { hOffset: 0, s: 93, l: 60 },   // sky
-          { hOffset: 15, s: 94, l: 43 },  // cyan
-          { hOffset: 60, s: 84, l: 67 },  // violet
-          { hOffset: 60, s: 89, l: 82 },  // light indigo
-        ];
-        const count = Math.max(Math.floor((w() * h()) / 6000), 50);
-        const dots: AuroraDot[] = [];
-        for (let i = 0; i < count; i++) {
-          const baseX = Math.random() * w();
-          const baseY = Math.random() * h();
-          dots.push({
-            x: baseX, y: baseY,
-            baseX, baseY,
-            radius: 1.5 + Math.random() * 4,
-            baseAlpha: 0.15 + Math.random() * 0.45,
-            pulsePhase: Math.random() * Math.PI * 2,
-            pulseSpeed: 0.001 + Math.random() * 0.002,
-            breathSpeed: 0.0005 + Math.random() * 0.001,
-            breathPhase: Math.random() * Math.PI * 2,
-            color: colors[Math.floor(Math.random() * colors.length)],
-            driftSpeedX: 0.0002 + Math.random() * 0.0005,
-            driftSpeedY: 0.0001 + Math.random() * 0.0003,
-            sizeOscSpeed: 0.001 + Math.random() * 0.003,
-            sizeOscPhase: Math.random() * Math.PI * 2,
-          });
-        }
-        auroraDotsRef.current = dots;
-      }
-    }
-
-    const animate = () => {
-      timeRef.current += 1;
-      const t = timeRef.current;
-      const themeHue = getThemeHue();
-
-      switch (variant) {
-        case 'constellation':
-          drawConstellation(canvas, constellationDotsRef.current, t, themeHue);
-          break;
-        case 'data-stream':
-          drawDataStream(canvas, dataStreamDotsRef.current, t, themeHue);
-          break;
-        case 'circuit':
-          drawCircuit(canvas, circuitDotsRef.current, circuitSparksRef.current, t, themeHue);
-          break;
-        case 'neural':
-          drawNeural(canvas, neuralDotsRef.current, t, themeHue);
-          break;
-        case 'aurora':
-          drawAurora(canvas, auroraDotsRef.current, t, themeHue);
-          break;
-      }
-
-      // Vignette
-      const cw = canvas.width;
-      const ch = canvas.height;
+    const updateGradients = (cw: number, ch: number) => {
       const vignetteGrad = ctx.createRadialGradient(
         cw / 2, ch / 2, Math.min(cw, ch) * 0.3,
         cw / 2, ch / 2, Math.max(cw, ch) * 0.7
       );
       vignetteGrad.addColorStop(0, 'rgba(0, 0, 0, 0)');
       vignetteGrad.addColorStop(1, 'rgba(0, 0, 0, 0.4)');
-      ctx.fillStyle = vignetteGrad;
-      ctx.fillRect(0, 0, cw, ch);
+      vignetteGradRef.current = vignetteGrad;
 
-      // Top/bottom fade
       const topFade = ctx.createLinearGradient(0, 0, 0, ch * 0.12);
       topFade.addColorStop(0, 'rgba(0, 0, 0, 0.8)');
       topFade.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = topFade;
-      ctx.fillRect(0, 0, cw, ch * 0.12);
+      topFadeRef.current = topFade;
 
       const bottomFade = ctx.createLinearGradient(0, ch * 0.88, 0, ch);
       bottomFade.addColorStop(0, 'rgba(0, 0, 0, 0)');
       bottomFade.addColorStop(1, 'rgba(0, 0, 0, 0.8)');
-      ctx.fillStyle = bottomFade;
-      ctx.fillRect(0, ch * 0.88, cw, ch * 0.12);
-
-      animationRef.current = requestAnimationFrame(animate);
+      bottomFadeRef.current = bottomFade;
     };
 
-    animate();
+    const resize = () => {
+      const rect = canvas.parentElement?.getBoundingClientRect();
+      if (rect && rect.width > 0 && rect.height > 0) {
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        updateGradients(rect.width, rect.height);
+      }
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    const cw = canvas.width;
+    const ch = canvas.height;
+
+    // Initialize particles (slightly reduced count for 60fps smoothness)
+    if (variant === 'constellation' && constellationDotsRef.current.length === 0) {
+      const colors: HslColor[] = [
+        { hOffset: 60, s: 90, l: 74 },
+        { hOffset: 60, s: 84, l: 67 },
+        { hOffset: 0, s: 93, l: 60 },
+      ];
+      const count = Math.max(Math.floor((cw * ch) / 12000), 25);
+      constellationDotsRef.current = initDots(cw, ch, count, colors);
+    }
+
+    if (variant === 'data-stream' && dataStreamDotsRef.current.length === 0) {
+      const colors: HslColor[] = [
+        { hOffset: 15, s: 94, l: 43 },
+        { hOffset: -20, s: 91, l: 60 },
+        { hOffset: 0, s: 93, l: 60 },
+      ];
+      const count = Math.max(Math.floor(cw / 35), 20);
+      const dots: StreamDot[] = [];
+      for (let i = 0; i < count; i++) {
+        dots.push({
+          x: Math.random() * cw,
+          y: Math.random() * ch,
+          speed: 0.3 + Math.random() * 0.7,
+          radius: 1.5 + Math.random() * 2.5,
+          baseAlpha: 0.2 + Math.random() * 0.4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          pulsePhase: Math.random() * Math.PI * 2,
+          pulseSpeed: 0.001 + Math.random() * 0.003,
+          drift: 0.3 + Math.random() * 0.4,
+          driftSpeed: 0.0005 + Math.random() * 0.001,
+          trail: [],
+        });
+      }
+      dataStreamDotsRef.current = dots;
+    }
+
+    if (variant === 'circuit' && circuitDotsRef.current.length === 0) {
+      const colors: HslColor[] = [
+        { hOffset: 15, s: 94, l: 43 },
+        { hOffset: -20, s: 91, l: 60 },
+        { hOffset: 0, s: 93, l: 60 },
+      ];
+      const cols = Math.floor(cw / 80);
+      const rows = Math.floor(ch / 80);
+      const dots: CircuitDot[] = [];
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          if (Math.random() < 0.3) continue;
+          dots.push({
+            x: col * 80 + 40 + (Math.random() - 0.5) * 20,
+            y: row * 80 + 40 + (Math.random() - 0.5) * 20,
+            baseRadius: 2 + Math.random() * 2.5,
+            baseAlpha: 0.2 + Math.random() * 0.35,
+            pulsePhase: Math.random() * Math.PI * 2,
+            pulseSpeed: 0.001 + Math.random() * 0.003,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            ringPhase: Math.random(),
+            ringSpeed: 0.0005 + Math.random() * 0.001,
+            ringMaxRadius: 15 + Math.random() * 20,
+          });
+        }
+      }
+      circuitDotsRef.current = dots;
+
+      const sparks: SparkDot[] = [];
+      for (let i = 0; i < Math.min(8, dots.length / 2); i++) {
+        const parent = dots[Math.floor(Math.random() * dots.length)];
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 0.5 + Math.random() * 1.2;
+        sparks.push({
+          x: parent.x,
+          y: parent.y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          radius: 1 + Math.random() * 1.2,
+          alpha: 0.6,
+          color: parent.color,
+          life: 30 + Math.floor(Math.random() * 40),
+          maxLife: 70,
+        });
+      }
+      circuitSparksRef.current = sparks;
+    }
+
+    if (variant === 'neural' && neuralDotsRef.current.length === 0) {
+      const colors: HslColor[] = [
+        { hOffset: 0, s: 93, l: 60 },
+        { hOffset: 60, s: 90, l: 74 },
+        { hOffset: -20, s: 91, l: 60 },
+      ];
+      const layers = 4;
+      const nodesPerLayer = Math.floor(ch / 100);
+      const dots: NeuralDot[] = [];
+
+      for (let l = 0; l < layers; l++) {
+        const count = Math.max(nodesPerLayer - Math.abs(l - Math.floor(layers / 2)) * 2, 2);
+        for (let n = 0; n < count; n++) {
+          const baseX = (cw / (layers + 1)) * (l + 1);
+          const baseY = (ch / (count + 1)) * (n + 1);
+          const color = colors[Math.floor(Math.random() * colors.length)];
+
+          const orbitDots: OrbitSpark[] = [];
+          for (let o = 0; o < 2; o++) {
+            orbitDots.push({
+              angle: Math.random() * Math.PI * 2,
+              speed: 0.01 + Math.random() * 0.02,
+              radius: 0.8 + Math.random() * 1.0,
+              distance: 8 + Math.random() * 15,
+              alpha: 0.3 + Math.random() * 0.3,
+              color: { hOffset: color.hOffset, s: color.s, l: Math.min(color.l + 10, 100) },
+            });
+          }
+
+          dots.push({
+            x: baseX, y: baseY,
+            baseX, baseY,
+            radius: 2.5 + Math.random() * 3,
+            baseAlpha: 0.2 + Math.random() * 0.35,
+            pulsePhase: Math.random() * Math.PI * 2,
+            pulseSpeed: 0.001 + Math.random() * 0.003,
+            color,
+            oscillateAmplitude: 5 + Math.random() * 10,
+            oscillateSpeedX: 0.0003 + Math.random() * 0.0007,
+            oscillateSpeedY: 0.0004 + Math.random() * 0.0006,
+            orbitDots,
+          });
+        }
+      }
+      neuralDotsRef.current = dots;
+    }
+
+    if (variant === 'aurora' && auroraDotsRef.current.length === 0) {
+      const colors: HslColor[] = [
+        { hOffset: -20, s: 91, l: 60 },
+        { hOffset: 60, s: 90, l: 74 },
+        { hOffset: 0, s: 93, l: 60 },
+      ];
+      const count = Math.max(Math.floor((cw * ch) / 10000), 30);
+      const dots: AuroraDot[] = [];
+      for (let i = 0; i < count; i++) {
+        const baseX = Math.random() * cw;
+        const baseY = Math.random() * ch;
+        dots.push({
+          x: baseX, y: baseY,
+          baseX, baseY,
+          radius: 1.5 + Math.random() * 3.5,
+          baseAlpha: 0.15 + Math.random() * 0.35,
+          pulsePhase: Math.random() * Math.PI * 2,
+          pulseSpeed: 0.001 + Math.random() * 0.002,
+          breathSpeed: 0.0005 + Math.random() * 0.001,
+          breathPhase: Math.random() * Math.PI * 2,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          driftSpeedX: 0.0002 + Math.random() * 0.0004,
+          driftSpeedY: 0.0001 + Math.random() * 0.0003,
+          sizeOscSpeed: 0.001 + Math.random() * 0.002,
+          sizeOscPhase: Math.random() * Math.PI * 2,
+        });
+      }
+      auroraDotsRef.current = dots;
+    }
+
+    // Main 60 FPS animation loop with delta-time throttling
+    const animate = (timestamp: number) => {
+      animationRef.current = requestAnimationFrame(animate);
+
+      // Skip rendering if off-screen
+      if (!isVisibleRef.current) return;
+
+      // Throttle to 60 FPS (~16.6ms)
+      if (timestamp - lastTimeRef.current < 16) return;
+      lastTimeRef.current = timestamp;
+
+      timeRef.current += 1;
+      const t = timeRef.current;
+
+      // Poll theme hue once every 30 frames
+      if (t % 30 === 0 && typeof window !== 'undefined') {
+        const val = getComputedStyle(document.documentElement).getPropertyValue('--theme-hue');
+        if (val) cachedHueRef.current = parseInt(val.trim(), 10) || 200;
+      }
+      const themeHue = cachedHueRef.current;
+
+      const w = canvas.width;
+      const h = canvas.height;
+
+      switch (variant) {
+        case 'constellation':
+          drawConstellation(ctx, w, h, constellationDotsRef.current, t, themeHue);
+          break;
+        case 'data-stream':
+          drawDataStream(ctx, w, h, dataStreamDotsRef.current, t, themeHue);
+          break;
+        case 'circuit':
+          drawCircuit(ctx, w, h, circuitDotsRef.current, circuitSparksRef.current, t, themeHue);
+          break;
+        case 'neural':
+          drawNeural(ctx, w, h, neuralDotsRef.current, t, themeHue);
+          break;
+        case 'aurora':
+          drawAurora(ctx, w, h, auroraDotsRef.current, t, themeHue);
+          break;
+      }
+
+      // Pre-cached vignette and fade overlays
+      if (vignetteGradRef.current) {
+        ctx.fillStyle = vignetteGradRef.current;
+        ctx.fillRect(0, 0, w, h);
+      }
+      if (topFadeRef.current) {
+        ctx.fillStyle = topFadeRef.current;
+        ctx.fillRect(0, 0, w, h * 0.12);
+      }
+      if (bottomFadeRef.current) {
+        ctx.fillStyle = bottomFadeRef.current;
+        ctx.fillRect(0, h * 0.88, w, h * 0.12);
+      }
+    };
+
+    animationRef.current = requestAnimationFrame(animate);
 
     return () => {
+      observer.disconnect();
       window.removeEventListener('resize', resize);
       cancelAnimationFrame(animationRef.current);
     };
@@ -755,7 +657,7 @@ export default function SectionBackground({ variant }: SectionBackgroundProps) {
     <canvas
       ref={canvasRef}
       className="absolute inset-0 z-0 pointer-events-none"
-      style={{ pointerEvents: 'none', willChange: 'transform' }}
+      style={{ pointerEvents: 'none', willChange: 'transform', transform: 'translateZ(0)' }}
       aria-hidden="true"
     />
   );
