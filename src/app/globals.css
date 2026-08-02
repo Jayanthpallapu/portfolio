@@ -144,6 +144,21 @@
   }
 }
 
+/* Hide native slider thumb completely for custom slider overlays */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+input[type="range"]::-moz-range-thumb {
+  appearance: none;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

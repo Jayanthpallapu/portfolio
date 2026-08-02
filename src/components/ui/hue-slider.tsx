@@ -48,7 +48,7 @@ export const ElasticHueSlider: React.FC<ElasticHueSliderProps> = ({
           onMouseUp={handleMouseUp}
           onTouchStart={handleMouseDown}
           onTouchEnd={handleMouseUp}
-          className="absolute inset-0 w-full h-full appearance-none bg-transparent cursor-pointer z-20"
+          className="absolute inset-0 w-full h-full appearance-none bg-transparent cursor-pointer z-20 opacity-0"
           style={{ WebkitAppearance: 'none' }}
         />
 
