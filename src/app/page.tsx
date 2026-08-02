@@ -15,7 +15,7 @@ export default function Home() {
   useVisitorTracking();
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0a0a1a] text-foreground">
+    <div className="min-h-screen flex flex-col bg-black text-foreground">
       <Navigation />
       <main className="flex-1">
         <HeroSection />

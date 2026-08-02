@@ -12,8 +12,8 @@ const socialLinks = [
 export default function Footer() {
   return (
     <footer className="relative border-t border-primary/10 overflow-hidden">
-      {/* Subtle gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#050510] via-[#0a0a1a] to-[#0a0a1a]" />
+      {/* Black background */}
+      <div className="absolute inset-0 bg-black" />
 
       {/* Glow line at top */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />

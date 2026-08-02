@@ -132,7 +132,7 @@ function drawConstellation(canvas: HTMLCanvasElement, dots: Dot[], time: number,
   const w = canvas.width;
   const h = canvas.height;
 
-  ctx.fillStyle = '#0a0a1a';
+  ctx.fillStyle = '#000000';
   ctx.fillRect(0, 0, w, h);
 
   for (const dot of dots) {
@@ -201,7 +201,7 @@ function drawDataStream(canvas: HTMLCanvasElement, dots: StreamDot[], time: numb
   const w = canvas.width;
   const h = canvas.height;
 
-  ctx.fillStyle = '#0a0a1a';
+  ctx.fillStyle = '#000000';
   ctx.fillRect(0, 0, w, h);
 
   for (const dot of dots) {
@@ -278,7 +278,7 @@ function drawCircuit(
   const w = canvas.width;
   const h = canvas.height;
 
-  ctx.fillStyle = '#0a0a1a';
+  ctx.fillStyle = '#000000';
   ctx.fillRect(0, 0, w, h);
 
   // Draw static dots with expanding ring animation
@@ -368,7 +368,7 @@ function drawNeural(canvas: HTMLCanvasElement, dots: NeuralDot[], time: number, 
   const w = canvas.width;
   const h = canvas.height;
 
-  ctx.fillStyle = '#0a0a1a';
+  ctx.fillStyle = '#000000';
   ctx.fillRect(0, 0, w, h);
 
   for (const dot of dots) {
@@ -433,7 +433,7 @@ function drawAurora(canvas: HTMLCanvasElement, dots: AuroraDot[], time: number, 
   const w = canvas.width;
   const h = canvas.height;
 
-  ctx.fillStyle = '#0a0a1a';
+  ctx.fillStyle = '#000000';
   ctx.fillRect(0, 0, w, h);
 
   // Subtle ambient gradient glow (no lines)
@@ -443,7 +443,7 @@ function drawAurora(canvas: HTMLCanvasElement, dots: AuroraDot[], time: number, 
   const color2 = hslToRgb(themeHue - 20, 91, 60);
   ambientGrad.addColorStop(0, `rgba(${color1.r}, ${color1.g}, ${color1.b}, 0.03)`);
   ambientGrad.addColorStop(0.5, `rgba(${color2.r}, ${color2.g}, ${color2.b}, 0.015)`);
-  ambientGrad.addColorStop(1, 'rgba(10, 10, 26, 0)');
+  ambientGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
   ctx.fillStyle = ambientGrad;
   ctx.fillRect(0, 0, w, h);
   ctx.globalCompositeOperation = 'source-over';
@@ -722,21 +722,21 @@ export default function SectionBackground({ variant }: SectionBackgroundProps) {
         cw / 2, ch / 2, Math.min(cw, ch) * 0.3,
         cw / 2, ch / 2, Math.max(cw, ch) * 0.7
       );
-      vignetteGrad.addColorStop(0, 'rgba(10, 10, 26, 0)');
-      vignetteGrad.addColorStop(1, 'rgba(10, 10, 26, 0.4)');
+      vignetteGrad.addColorStop(0, 'rgba(0, 0, 0, 0)');
+      vignetteGrad.addColorStop(1, 'rgba(0, 0, 0, 0.4)');
       ctx.fillStyle = vignetteGrad;
       ctx.fillRect(0, 0, cw, ch);
 
       // Top/bottom fade
       const topFade = ctx.createLinearGradient(0, 0, 0, ch * 0.12);
-      topFade.addColorStop(0, 'rgba(10, 10, 26, 0.8)');
-      topFade.addColorStop(1, 'rgba(10, 10, 26, 0)');
+      topFade.addColorStop(0, 'rgba(0, 0, 0, 0.8)');
+      topFade.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = topFade;
       ctx.fillRect(0, 0, cw, ch * 0.12);
 
       const bottomFade = ctx.createLinearGradient(0, ch * 0.88, 0, ch);
-      bottomFade.addColorStop(0, 'rgba(10, 10, 26, 0)');
-      bottomFade.addColorStop(1, 'rgba(10, 10, 26, 0.8)');
+      bottomFade.addColorStop(0, 'rgba(0, 0, 0, 0)');
+      bottomFade.addColorStop(1, 'rgba(0, 0, 0, 0.8)');
       ctx.fillStyle = bottomFade;
       ctx.fillRect(0, ch * 0.88, cw, ch * 0.12);
 
