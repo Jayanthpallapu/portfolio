@@ -201,7 +201,10 @@ export default function HeroSection() {
               Contact Me
             </a>
             <a
-              href="#"
+              href="/Jayanth_Pallapu_Resume.pdf"
+              download="Jayanth_Pallapu_Resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
               className="group relative w-full sm:w-auto px-8 py-3.5 border border-blue-400/30 text-blue-300 font-semibold rounded-xl hover:bg-blue-500/10 hover:border-blue-400/50 transition-all duration-300 flex items-center justify-center gap-2"
             >
               <Download size={18} />
