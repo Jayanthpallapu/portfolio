@@ -754,8 +754,8 @@ export default function SectionBackground({ variant }: SectionBackgroundProps) {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 z-0"
-      style={{ pointerEvents: 'none' }}
+      className="absolute inset-0 z-0 pointer-events-none"
+      style={{ pointerEvents: 'none', willChange: 'transform' }}
       aria-hidden="true"
     />
   );
