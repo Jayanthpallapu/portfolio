@@ -107,47 +107,47 @@ export default function ContactSection() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-[#38bdf8] text-base font-mono tracking-wider uppercase mb-3"
+          className="text-[#38bdf8] text-sm font-mono tracking-wider uppercase mb-3"
         >
           Let&apos;s connect
         </motion.p>
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white">
           Get In <span className="text-[#38bdf8] glow-text-blue">Touch</span>
         </h2>
-        <p className="text-gray-300 text-base md:text-xl mt-4 max-w-xl mx-auto leading-relaxed">
+        <p className="text-gray-400 text-sm md:text-base mt-4 max-w-lg mx-auto leading-relaxed">
           Have a data challenge or want to collaborate on a project? I&apos;d love to hear from you.
           Drop me a message and I&apos;ll get back to you as soon as possible.
         </p>
       </div>
 
-      <div className="grid md:grid-cols-5 gap-10 lg:gap-12">
+      <div className="grid md:grid-cols-5 gap-10">
         {/* Contact Info */}
-        <div className="md:col-span-2 space-y-8">
+        <div className="md:col-span-2 space-y-6">
           {/* Info Cards */}
           <div className="space-y-4">
             {contactInfo.map((info) => (
               <motion.div
                 key={info.label}
                 whileHover={{ x: 5 }}
-                className="glass rounded-xl p-5 flex items-center gap-4 group cursor-default"
+                className="glass rounded-xl p-4 flex items-center gap-4 group cursor-default"
               >
                 <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center transition-colors flex-shrink-0"
+                  className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors flex-shrink-0"
                   style={{ backgroundColor: `${info.color}15`, color: info.color }}
                 >
                   {info.icon}
                 </div>
                 <div>
-                  <p className="text-xs md:text-sm text-gray-400 font-semibold uppercase tracking-wider">{info.label}</p>
+                  <p className="text-xs text-gray-500 uppercase tracking-wider">{info.label}</p>
                   {info.href ? (
                     <a
                       href={info.href}
-                      className="text-base md:text-lg text-gray-200 hover:text-white transition-colors font-medium"
+                      className="text-sm md:text-base text-gray-300 hover:text-white transition-colors font-medium"
                     >
                       {info.value}
                     </a>
                   ) : (
-                    <p className="text-base md:text-lg text-gray-200 font-medium">{info.value}</p>
+                    <p className="text-sm md:text-base text-gray-300 font-medium">{info.value}</p>
                   )}
                 </div>
               </motion.div>
@@ -156,8 +156,8 @@ export default function ContactSection() {
 
           {/* Social Links */}
           <div className="pt-2">
-            <p className="text-xs md:text-sm text-gray-400 font-semibold uppercase tracking-wider mb-4">Find me on</p>
-            <div className="flex gap-4">
+            <p className="text-xs text-gray-500 uppercase tracking-wider mb-4">Find me on</p>
+            <div className="flex gap-3">
               {socialLinks.map((link) => (
                 <motion.a
                   key={link.label}
@@ -166,7 +166,7 @@ export default function ContactSection() {
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-14 h-14 rounded-2xl glass flex items-center justify-center text-gray-300 hover:text-white transition-colors"
+                  className="w-12 h-12 rounded-xl glass flex items-center justify-center text-gray-400 hover:text-white transition-colors"
                   onMouseEnter={(e) => {
                     e.currentTarget.style.boxShadow = `0 0 20px ${link.color}25`;
                     e.currentTarget.style.borderColor = `${link.color}40`;
@@ -188,10 +188,10 @@ export default function ContactSection() {
 
         {/* Contact Form */}
         <div className="md:col-span-3">
-          <form onSubmit={handleSubmit} className="glass rounded-2xl p-8 md:p-10 space-y-6">
-            <div className="grid sm:grid-cols-2 gap-6">
+          <form onSubmit={handleSubmit} className="glass rounded-2xl p-6 md:p-8 space-y-5">
+            <div className="grid sm:grid-cols-2 gap-5">
               <div className="space-y-2">
-                <label htmlFor="name" className="text-base text-gray-200 font-medium">
+                <label htmlFor="name" className="text-sm text-gray-400 font-medium">
                   Your Name
                 </label>
                 <input
@@ -200,13 +200,13 @@ export default function ContactSection() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-5 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#3b82f6]/50 focus:ring-1 focus:ring-[#3b82f6]/20 transition-all text-base md:text-lg"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#3b82f6]/50 focus:ring-1 focus:ring-[#3b82f6]/20 transition-all text-sm"
                   placeholder="Your Name"
                   disabled={status === 'submitting'}
                 />
               </div>
               <div className="space-y-2">
-                <label htmlFor="email" className="text-base text-gray-200 font-medium">
+                <label htmlFor="email" className="text-sm text-gray-400 font-medium">
                   Your Email
                 </label>
                 <input
@@ -215,14 +215,14 @@ export default function ContactSection() {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-5 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#3b82f6]/50 focus:ring-1 focus:ring-[#3b82f6]/20 transition-all text-base md:text-lg"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#3b82f6]/50 focus:ring-1 focus:ring-[#3b82f6]/20 transition-all text-sm"
                   placeholder="you@example.com"
                   disabled={status === 'submitting'}
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <label htmlFor="message" className="text-base text-gray-200 font-medium">
+              <label htmlFor="message" className="text-sm text-gray-400 font-medium">
                 Message
               </label>
               <textarea
@@ -231,7 +231,7 @@ export default function ContactSection() {
                 rows={5}
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="w-full px-5 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#3b82f6]/50 focus:ring-1 focus:ring-[#3b82f6]/20 transition-all text-base md:text-lg resize-none"
+                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#3b82f6]/50 focus:ring-1 focus:ring-[#3b82f6]/20 transition-all text-sm resize-none"
                 placeholder="Tell me about your data challenge..."
                 disabled={status === 'submitting'}
               />
@@ -242,9 +242,9 @@ export default function ContactSection() {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2.5 text-red-400 text-base bg-red-500/10 border border-red-500/20 rounded-xl px-5 py-3.5"
+                className="flex items-center gap-2 text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3"
               >
-                <AlertCircle size={18} />
+                <AlertCircle size={16} />
                 {errorMessage}
               </motion.div>
             )}
@@ -254,22 +254,22 @@ export default function ContactSection() {
               disabled={status === 'submitting'}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full py-4 rounded-xl bg-gradient-to-r from-[#2563eb] to-[#3b82f6] text-white font-semibold text-base md:text-lg flex items-center justify-center gap-2.5 hover:from-[#1d4ed8] hover:to-[#2563eb] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#2563eb] to-[#3b82f6] text-white font-semibold text-sm md:text-base flex items-center justify-center gap-2 hover:from-[#1d4ed8] hover:to-[#2563eb] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {status === 'submitting' ? (
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                  className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full"
+                  className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
                 />
               ) : status === 'success' ? (
                 <>
-                  <CheckCircle size={20} />
+                  <CheckCircle size={18} />
                   Message Sent!
                 </>
               ) : (
                 <>
-                  <Send size={20} />
+                  <Send size={18} />
                   Send Message
                 </>
               )}

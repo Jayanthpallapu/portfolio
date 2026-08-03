@@ -77,14 +77,14 @@ export default function HeroSection() {
           >
             <div className="relative">
               <div 
-                className="w-28 h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-full p-[3px] transition-colors duration-300"
+                className="w-28 h-28 md:w-32 md:h-32 rounded-full p-[3px] transition-colors duration-300"
                 style={{
                   background: `linear-gradient(135deg, hsl(${lightningHue}, 85%, 55%), hsl(${(lightningHue + 40) % 360}, 85%, 55%))`
                 }}
               >
                 <div className="w-full h-full rounded-full bg-[#020617]/90 backdrop-blur-sm flex items-center justify-center overflow-hidden">
                   <span 
-                    className="text-3xl md:text-4xl lg:text-5xl font-bold transition-all duration-300"
+                    className="text-3xl md:text-4xl font-bold transition-all duration-300"
                     style={{
                       color: `hsl(${lightningHue}, 85%, 55%)`,
                       textShadow: `0 0 15px hsl(${lightningHue}, 85%, 55%, 0.5)`
@@ -96,15 +96,15 @@ export default function HeroSection() {
               </div>
               {/* Orbiting dot */}
               <motion.div
-                className="absolute w-3 h-3 rounded-full"
+                className="absolute w-2.5 h-2.5 rounded-full"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
                 style={{
                   top: '50%',
                   left: '50%',
                   transformOrigin: '0 0',
-                  translateX: '76px',
-                  translateY: '-1.5px',
+                  translateX: '64px',
+                  translateY: '-1.2px',
                   backgroundColor: `hsl(${lightningHue}, 85%, 55%)`,
                   boxShadow: `0 0 12px hsl(${lightningHue}, 85%, 55%, 0.8), 0 0 24px hsl(${lightningHue}, 85%, 55%, 0.4)`,
                 }}
@@ -119,8 +119,8 @@ export default function HeroSection() {
             transition={{ delay: 0.2, duration: 0.6 }}
             className="flex items-center justify-center lg:justify-start gap-2 text-blue-300/70 mb-3 w-full"
           >
-            <MapPin size={16} />
-            <span className="text-base md:text-lg tracking-wide font-medium">Bangalore, India</span>
+            <MapPin size={15} />
+            <span className="text-sm md:text-base tracking-wide font-medium">Bangalore, India</span>
           </motion.div>
 
           {/* Name */}
@@ -128,7 +128,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.8 }}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl 2xl:text-[100px] font-extrabold tracking-tight mb-4 text-center lg:text-left w-full leading-[1.05]"
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold tracking-tight mb-4 text-center lg:text-left w-full leading-[1.05]"
           >
             <span className="text-white">JAYANTH</span>{' '}
             <span 
@@ -146,9 +146,9 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
-            className="mb-5 w-full"
+            className="mb-4 w-full"
           >
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-blue-100/80 font-medium tracking-tight">
+            <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-blue-100/80 font-medium tracking-tight">
               Applied AI Engineer & Data Science Manager
             </h2>
           </motion.div>
@@ -158,7 +158,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.6 }}
-            className="text-blue-200/50 text-base md:text-xl lg:text-2xl max-w-2xl mb-8 leading-relaxed text-center lg:text-left font-normal"
+            className="text-blue-200/50 text-base md:text-lg max-w-xl mb-6 leading-relaxed text-center lg:text-left font-normal"
           >
             Specializing in architecting end-to-end AI solutions, multi-agent systems,
             analytics pipelines, and predictive models to solve complex business challenges
@@ -191,13 +191,13 @@ export default function HeroSection() {
                 e.preventDefault();
                 document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="group relative w-full sm:w-auto px-10 py-4 text-white font-semibold text-base md:text-lg lg:text-xl rounded-xl transition-all duration-300 flex items-center justify-center gap-2.5"
+              className="group relative w-full sm:w-auto px-8 py-3.5 text-white font-semibold text-base rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
               style={{
                 background: `linear-gradient(135deg, hsl(${lightningHue}, 75%, 45%), hsl(${lightningHue}, 85%, 55%))`,
-                boxShadow: `0 0 25px hsl(${lightningHue}, 85%, 55%, 0.35)`
+                boxShadow: `0 0 20px hsl(${lightningHue}, 85%, 55%, 0.35)`
               }}
             >
-              <Mail size={20} />
+              <Mail size={18} />
               Contact Me
             </a>
             <a
@@ -205,9 +205,9 @@ export default function HeroSection() {
               download="Jayanth_Pallapu_Resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative w-full sm:w-auto px-10 py-4 border border-blue-400/30 text-blue-300 font-semibold text-base md:text-lg lg:text-xl rounded-xl hover:bg-blue-500/10 hover:border-blue-400/50 transition-all duration-300 flex items-center justify-center gap-2.5"
+              className="group relative w-full sm:w-auto px-8 py-3.5 border border-blue-400/30 text-blue-300 font-semibold text-base rounded-xl hover:bg-blue-500/10 hover:border-blue-400/50 transition-all duration-300 flex items-center justify-center gap-2"
             >
-              <Download size={20} />
+              <Download size={18} />
               Download Resume
             </a>
           </motion.div>

@@ -75,16 +75,16 @@ export default function ProjectsSection() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-[#38bdf8] text-base font-mono tracking-wider uppercase mb-3"
+          className="text-[#38bdf8] text-sm font-mono tracking-wider uppercase mb-3"
         >
           What I&apos;ve built
         </motion.p>
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white">
           Featured <span className="text-[#38bdf8] glow-text-blue">Projects</span>
         </h2>
       </div>
 
-      <div ref={gridRef} className="grid md:grid-cols-2 gap-8">
+      <div ref={gridRef} className="grid md:grid-cols-2 gap-7">
         {projects.map((project, i) => (
           <motion.div
             key={project.name}
@@ -92,7 +92,7 @@ export default function ProjectsSection() {
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: i * 0.1, duration: 0.6, ease: 'easeOut' }}
             whileHover={{ y: -8, scale: 1.01 }}
-            className="glass rounded-2xl p-8 group cursor-pointer transition-all duration-300 flex flex-col"
+            className="glass rounded-2xl p-7 group cursor-pointer transition-all duration-300 flex flex-col"
             onMouseEnter={(e) => {
               e.currentTarget.style.boxShadow = `0 0 30px color-mix(in srgb, ${project.color} 12.5%, transparent)`;
               e.currentTarget.style.borderColor = `color-mix(in srgb, ${project.color} 18.8%, transparent)`;
@@ -104,33 +104,33 @@ export default function ProjectsSection() {
           >
             {/* Project color accent bar */}
             <div
-              className="w-16 h-1.5 rounded-full mb-5 transition-all duration-300 group-hover:w-24"
+              className="w-14 h-1 rounded-full mb-4 transition-all duration-300 group-hover:w-20"
               style={{ backgroundColor: project.color }}
             />
 
-            <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 group-hover:transition-colors">
+            <h3 className="text-xl md:text-2xl font-bold text-white mb-2.5 group-hover:transition-colors">
               {project.name}
             </h3>
-            <p className="text-gray-300 text-base md:text-lg leading-relaxed mb-5 font-normal">
+            <p className="text-gray-300 text-sm md:text-base leading-relaxed mb-4 font-normal">
               {project.description}
             </p>
 
             {/* Highlights */}
-            <ul className="space-y-2 mb-6">
+            <ul className="space-y-2 mb-5">
               {project.highlights.map((h) => (
-                <li key={h} className="flex items-start gap-2.5 text-sm md:text-base text-gray-400">
-                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: project.color }} />
+                <li key={h} className="flex items-start gap-2 text-xs md:text-sm text-gray-400">
+                  <span className="mt-1 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: project.color }} />
                   <span>{h}</span>
                 </li>
               ))}
             </ul>
 
             {/* Tech Tags */}
-            <div className="flex flex-wrap gap-2.5 mb-6 mt-auto">
+            <div className="flex flex-wrap gap-2 mb-5 mt-auto">
               {project.tech.map((t) => (
                 <span
                   key={t}
-                  className="px-3 py-1.5 text-xs md:text-sm rounded-lg font-medium"
+                  className="px-2.5 py-1 text-xs rounded-lg font-medium"
                   style={{
                     backgroundColor: `color-mix(in srgb, ${project.color} 6.3%, transparent)`,
                     color: project.color,
@@ -143,24 +143,24 @@ export default function ProjectsSection() {
             </div>
 
             {/* Links */}
-            <div className="flex items-center gap-6 pt-4 border-t border-white/10">
+            <div className="flex items-center gap-5 pt-3.5 border-t border-white/10">
               <a
                 href={project.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-base text-gray-300 hover:text-white font-medium transition-colors"
+                className="flex items-center gap-1.5 text-sm text-gray-300 hover:text-white font-medium transition-colors"
               >
-                <Github size={18} />
+                <Github size={16} />
                 <span>Code</span>
               </a>
               <a
                 href={project.live}
                 target={project.live.startsWith('http') ? '_blank' : undefined}
                 rel={project.live.startsWith('http') ? 'noopener noreferrer' : undefined}
-                className="flex items-center gap-2 text-base text-gray-300 hover:text-white font-medium transition-colors"
+                className="flex items-center gap-1.5 text-sm text-gray-300 hover:text-white font-medium transition-colors"
                 onClick={(e) => { if (project.live === '#') e.preventDefault(); }}
               >
-                <ExternalLink size={18} />
+                <ExternalLink size={16} />
                 <span>Live Demo</span>
               </a>
             </div>

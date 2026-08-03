@@ -43,42 +43,42 @@ export default function AboutSection() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-[#38bdf8] text-base font-mono tracking-wider uppercase mb-3"
+          className="text-[#38bdf8] text-sm font-mono tracking-wider uppercase mb-3"
         >
           Get to know me
         </motion.p>
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white">
           About <span className="text-[#38bdf8] glow-text-blue">Me</span>
         </h2>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div className="grid md:grid-cols-2 gap-10 lg:gap-14 items-center">
         {/* Bio Text */}
         <motion.div
           initial={{ opacity: 0, x: -40 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          className="space-y-6"
+          className="space-y-5"
         >
-          <p className="text-gray-200 leading-relaxed text-xl md:text-2xl lg:text-3xl font-medium">
+          <p className="text-gray-200 leading-relaxed text-lg md:text-xl font-medium">
             Results-driven Applied AI Engineer specializing in architecting end-to-end
             AI solutions for complex business challenges.
           </p>
-          <p className="text-gray-300 leading-relaxed text-base md:text-lg lg:text-xl">
+          <p className="text-gray-300 leading-relaxed text-base">
             Skilled in deploying analytics pipelines and predictive models with strong evaluation
             frameworks to maintain product performance. Collaborates with cross-functional
             teams to translate data into actionable product roadmaps and measurable ROI,
             effectively managing multiple high-priority initiatives in fast-paced environments.
           </p>
-          <p className="text-gray-400 leading-relaxed text-base md:text-lg lg:text-xl">
+          <p className="text-gray-400 leading-relaxed text-base">
             Education background includes B.com Computer Applications from Sri Venkateswara University,
             Tirupathi (09/2022) and Common Proficiency Test (CPT) from Institute of Chartered Accountants of India (06/2016 | Chennai).
           </p>
         </motion.div>
 
         {/* Highlights */}
-        <div ref={highlightsRef} className="grid grid-cols-2 gap-5">
+        <div ref={highlightsRef} className="grid grid-cols-2 gap-4 md:gap-5">
           {highlights.map((item, i) => (
             <motion.div
               key={item.label}
@@ -86,7 +86,7 @@ export default function AboutSection() {
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
               transition={{ delay: i * 0.15, duration: 0.5, ease: 'easeOut' }}
               whileHover={{ scale: 1.05, y: -5 }}
-              className="glass rounded-2xl p-6 md:p-8 text-center group cursor-default"
+              className="glass rounded-2xl p-6 text-center group cursor-default"
               style={{
                 boxShadow: `0 0 0 rgba(0,0,0,0)`,
               }}
@@ -100,18 +100,18 @@ export default function AboutSection() {
               }}
             >
               <div
-                className="inline-flex items-center justify-center w-14 h-14 rounded-xl mb-4 transition-colors duration-300"
+                className="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-3 transition-colors duration-300"
                 style={{ backgroundColor: `color-mix(in srgb, ${item.color} 10%, transparent)`, color: item.color }}
               >
                 {item.icon}
               </div>
               <h3
-                className="text-2xl md:text-3xl lg:text-4xl font-extrabold mb-2"
+                className="text-2xl md:text-3xl font-extrabold mb-1"
                 style={{ color: item.color }}
               >
                 {item.value}
               </h3>
-              <p className="text-gray-300 text-sm md:text-base font-medium">{item.label}</p>
+              <p className="text-gray-400 text-xs md:text-sm font-medium">{item.label}</p>
             </motion.div>
           ))}
         </div>
