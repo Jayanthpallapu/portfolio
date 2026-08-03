@@ -9,7 +9,7 @@ import { Lightning } from './ui/lightning';
 import { ElasticHueSlider } from './ui/hue-slider';
 
 export default function HeroSection() {
-  const [lightningHue, setLightningHue] = useState(360); // Default red/pink hue as shown in user's image
+  const [lightningHue, setLightningHue] = useState(198); // Default cyan/electric blue hue (198°) as requested
 
   useEffect(() => {
     document.documentElement.style.setProperty('--theme-hue', lightningHue.toString());
