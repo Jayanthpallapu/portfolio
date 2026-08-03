@@ -12,8 +12,8 @@ const projects = [
       'Architected a multi-modal data curation and hybrid vector retrieval pipeline in Python for NVIDIA technical documentation using Qdrant, PyMuPDF, and Scrapy. Implemented dense and BM25 sparse vector search with Reciprocal Rank Fusion (RRF) deduplication to enable low-latency, context-rich retrieval for LLM agent workflows.',
     tech: ['Python', 'Qdrant', 'PyMuPDF', 'Scrapy', 'RRF Search', 'BM25 Sparse'],
     color: '#3b82f6',
-    github: 'https://github.com/Jayanthpallapu',
-    live: '#',
+    github: 'https://github.com/Jayanthpallapu/Nvidia-DriveSync',
+    live: 'https://drivesync-portal-1019147219035.us-central1.run.app/',
     highlights: [
       'Multi-modal data curation & hybrid vector retrieval pipeline',
       'Dense and BM25 sparse vector search with RRF deduplication',
@@ -26,8 +26,8 @@ const projects = [
       'Built an enterprise-grade multi-agent AI platform utilizing CrewAI, Groq (Llama 3.3), FastAPI, and Next.js to automate gold market correlation research, news sentiment mining, and paper trading execution across 6 specialized autonomous agents. Integrated Model Context Protocol (MCP) with 25 tools, real-time WebSocket telemetry, Supabase database persistence, and self-healing supervisor auditing with live Telegram alerts.',
     tech: ['CrewAI', 'Groq (Llama 3.3)', 'FastAPI', 'Next.js', 'MCP', 'Supabase', 'WebSockets'],
     color: '#38bdf8',
-    github: 'https://github.com/Jayanthpallapu',
-    live: '#',
+    github: 'https://github.com/Jayanthpallapu/XAUUSD-Agentic-AI',
+    live: 'https://xauusd-agentic-ai-6g3p.vercel.app/',
     highlights: [
       '6 specialized autonomous agents for market research & paper trading',
       'Integrated Model Context Protocol (MCP) with 25 tools',
@@ -40,7 +40,7 @@ const projects = [
       'Engineered an end-to-end Customer Churn Prediction system in Python using EDA, cohort analysis, and feature engineering to identify key attrition drivers. Built an automated MLOps pipeline with Apache Airflow for ETL, data validation, model retraining, and real-time risk scoring, along with a Streamlit dashboard for retention insights.',
     tech: ['Python', 'EDA', 'Cohort Analysis', 'Apache Airflow', 'MLOps', 'Streamlit'],
     color: '#818cf8',
-    github: 'https://github.com/Jayanthpallapu',
+    github: 'https://github.com/Jayanthpallapu/Customer-churn-prediction-ML-pipeline',
     live: '#',
     highlights: [
       'EDA & cohort analysis for identifying key attrition drivers',
@@ -54,7 +54,7 @@ const projects = [
       'Developed an end-to-end predictive modeling pipeline in Python for residential property valuation, performing EDA, feature engineering, outlier handling, imputation, encoding, and feature scaling to prepare high-quality data for accurate model training and prediction.',
     tech: ['Python', 'EDA', 'Feature Engineering', 'Outlier Handling', 'Imputation', 'Feature Scaling'],
     color: '#06b6d4',
-    github: 'https://github.com/Jayanthpallapu',
+    github: 'https://github.com/Jayanthpallapu/House-price-prediction-project/tree/master',
     live: '#',
     highlights: [
       'End-to-end predictive modeling pipeline for property valuation',
@@ -109,7 +109,15 @@ export default function ProjectsSection() {
             />
 
             <h3 className="text-xl md:text-2xl font-bold text-white mb-2.5 group-hover:transition-colors">
-              {project.name}
+              <a
+                href={project.live !== '#' ? project.live : project.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-[#38bdf8] transition-colors inline-flex items-center gap-2"
+              >
+                <span>{project.name}</span>
+                <ExternalLink size={18} className="opacity-0 group-hover:opacity-100 transition-opacity text-[#38bdf8]" />
+              </a>
             </h3>
             <p className="text-gray-300 text-sm md:text-base leading-relaxed mb-4 font-normal">
               {project.description}
@@ -153,16 +161,17 @@ export default function ProjectsSection() {
                 <Github size={16} />
                 <span>Code</span>
               </a>
-              <a
-                href={project.live}
-                target={project.live.startsWith('http') ? '_blank' : undefined}
-                rel={project.live.startsWith('http') ? 'noopener noreferrer' : undefined}
-                className="flex items-center gap-1.5 text-sm text-gray-300 hover:text-white font-medium transition-colors"
-                onClick={(e) => { if (project.live === '#') e.preventDefault(); }}
-              >
-                <ExternalLink size={16} />
-                <span>Live Demo</span>
-              </a>
+              {project.live && project.live !== '#' && (
+                <a
+                  href={project.live}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 text-sm text-gray-300 hover:text-white font-medium transition-colors"
+                >
+                  <ExternalLink size={16} />
+                  <span>Live Demo</span>
+                </a>
+              )}
             </div>
           </motion.div>
         ))}
