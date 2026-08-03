@@ -60,8 +60,8 @@ export default function Navigation() {
             : 'bg-transparent'
         }`}
       >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1536px] mx-auto px-4 sm:px-8 lg:px-12 2xl:px-20">
+          <div className="flex items-center justify-between h-16 md:h-22">
             {/* Logo */}
             <motion.a
               href="#home"
@@ -69,7 +69,7 @@ export default function Navigation() {
                 e.preventDefault();
                 handleNavClick('#home');
               }}
-              className="text-lg md:text-xl font-bold tracking-wider"
+              className="text-xl md:text-2xl lg:text-3xl font-bold tracking-wider"
               whileHover={{ scale: 1.05 }}
             >
               <span className="text-[#38bdf8] glow-text-blue">J</span>
@@ -77,7 +77,7 @@ export default function Navigation() {
             </motion.a>
 
             {/* Desktop Nav */}
-            <div className="hidden md:flex items-center gap-1">
+            <div className="hidden md:flex items-center gap-2">
               {navLinks.map((link) => (
                 <a
                   key={link.href}
@@ -86,7 +86,7 @@ export default function Navigation() {
                     e.preventDefault();
                     handleNavClick(link.href);
                   }}
-                  className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-300 ${
+                  className={`relative px-4 py-2.5 text-base lg:text-lg font-medium rounded-lg transition-colors duration-300 ${
                     activeSection === link.href.slice(1)
                       ? 'text-[#38bdf8]'
                       : 'text-gray-400 hover:text-white'

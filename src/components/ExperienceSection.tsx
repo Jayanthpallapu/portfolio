@@ -102,11 +102,11 @@ export default function ExperienceSection() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-[#38bdf8] text-sm font-mono tracking-wider uppercase mb-3"
+          className="text-[#38bdf8] text-base font-mono tracking-wider uppercase mb-3"
         >
           My professional journey
         </motion.p>
-        <h2 className="text-3xl md:text-4xl font-bold text-white">
+        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white">
           Work <span className="text-[#38bdf8] glow-text-blue">Experience</span>
         </h2>
       </div>
@@ -127,10 +127,10 @@ export default function ExperienceSection() {
               }`}
             >
               {/* Timeline dot */}
-              <div className="absolute left-4 md:left-1/2 top-6 w-3 h-3 rounded-full -translate-x-1/2 md:-translate-x-1.5 z-10"
+              <div className="absolute left-4 md:left-1/2 top-6 w-3.5 h-3.5 rounded-full -translate-x-1/2 md:-translate-x-1.5 z-10"
                 style={{
                   backgroundColor: exp.color,
-                  boxShadow: `0 0 12px color-mix(in srgb, ${exp.color} 37.6%, transparent)`,
+                  boxShadow: `0 0 14px color-mix(in srgb, ${exp.color} 37.6%, transparent)`,
                 }}
               />
 
@@ -141,7 +141,7 @@ export default function ExperienceSection() {
               <div className="ml-12 md:ml-0 md:w-1/2">
                 <motion.div
                   whileHover={{ y: -3 }}
-                  className="glass rounded-2xl p-6 transition-all duration-300"
+                  className="glass rounded-2xl p-6 md:p-8 transition-all duration-300"
                   onMouseEnter={(e) => {
                     e.currentTarget.style.boxShadow = `0 0 30px color-mix(in srgb, ${exp.color} 8.2%, transparent)`;
                     e.currentTarget.style.borderColor = `color-mix(in srgb, ${exp.color} 18.8%, transparent)`;
@@ -151,40 +151,40 @@ export default function ExperienceSection() {
                     e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
                   }}
                 >
-                  <div className="flex items-center gap-3 mb-3">
+                  <div className="flex items-center gap-3.5 mb-3">
                     <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center"
+                      className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
                       style={{ backgroundColor: `color-mix(in srgb, ${exp.color} 8.2%, transparent)`, color: exp.color }}
                     >
-                      <Briefcase size={20} />
+                      <Briefcase size={22} />
                     </div>
                     <div>
-                      <h3 className="text-white font-semibold text-lg">{exp.role}</h3>
-                      <p style={{ color: exp.color }} className="text-sm font-medium">
+                      <h3 className="text-white font-bold text-xl md:text-2xl">{exp.role}</h3>
+                      <p style={{ color: exp.color }} className="text-base md:text-lg font-semibold">
                         {exp.company}
                       </p>
                     </div>
                   </div>
 
-                  <p className="text-gray-500 text-sm mb-1 font-mono">{exp.duration}</p>
-                  <p className="text-gray-300 text-sm mb-4 leading-relaxed">{exp.description}</p>
+                  <p className="text-gray-400 text-sm md:text-base mb-2 font-mono">{exp.duration}</p>
+                  <p className="text-gray-200 text-base md:text-lg mb-5 leading-relaxed">{exp.description}</p>
 
                   {/* Achievements */}
-                  <ul className="space-y-2 mb-4">
+                  <ul className="space-y-2.5 mb-5">
                     {exp.achievements.map((achievement) => (
-                      <li key={achievement} className="flex items-start gap-2 text-sm text-gray-400">
-                        <ChevronRight size={14} className="mt-0.5 flex-shrink-0" style={{ color: exp.color }} />
+                      <li key={achievement} className="flex items-start gap-2.5 text-base md:text-lg text-gray-300">
+                        <ChevronRight size={18} className="mt-1 flex-shrink-0" style={{ color: exp.color }} />
                         <span>{achievement}</span>
                       </li>
                     ))}
                   </ul>
 
                   {/* Tech tags */}
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2.5">
                     {exp.tech.map((t) => (
                       <span
                         key={t}
-                        className="px-2.5 py-1 text-xs rounded-lg font-medium"
+                        className="px-3 py-1.5 text-xs md:text-sm rounded-lg font-medium"
                         style={{
                           backgroundColor: `color-mix(in srgb, ${exp.color} 6.3%, transparent)`,
                           color: exp.color,
@@ -203,13 +203,13 @@ export default function ExperienceSection() {
       </div>
 
       {/* Education Section */}
-      <div className="mt-20">
-        <div className="text-center mb-8">
-          <h3 className="text-2xl font-bold text-white">
+      <div className="mt-24">
+        <div className="text-center mb-10">
+          <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white">
             Education & <span className="text-[#38bdf8]">Qualifications</span>
           </h3>
         </div>
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {educationList.map((edu) => (
             <motion.div
               key={edu.degree}
@@ -217,18 +217,18 @@ export default function ExperienceSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="glass rounded-2xl p-6 flex flex-col justify-between"
+              className="glass rounded-2xl p-8 flex flex-col justify-between"
             >
-              <div className="flex items-start gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary flex-shrink-0">
-                  <Briefcase size={20} />
+              <div className="flex items-start gap-4 mb-4">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-primary/10 text-primary flex-shrink-0">
+                  <Briefcase size={22} />
                 </div>
                 <div>
-                  <h4 className="text-white font-semibold text-lg">{edu.degree}</h4>
-                  <p className="text-primary text-sm font-medium mt-1">{edu.institution}</p>
+                  <h4 className="text-white font-bold text-xl md:text-2xl">{edu.degree}</h4>
+                  <p className="text-primary text-base md:text-lg font-medium mt-1">{edu.institution}</p>
                 </div>
               </div>
-              <p className="text-gray-500 text-sm font-mono self-end">{edu.date}</p>
+              <p className="text-gray-400 text-sm md:text-base font-mono self-end">{edu.date}</p>
             </motion.div>
           ))}
         </div>

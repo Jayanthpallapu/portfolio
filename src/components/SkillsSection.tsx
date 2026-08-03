@@ -68,12 +68,12 @@ function SkillBar({ skill, color, delay }: { skill: Skill; color: string; delay:
   const isInView = useInView(ref, { once: true, margin: '-20px' });
 
   return (
-    <div ref={ref} className="space-y-2">
+    <div ref={ref} className="space-y-2.5">
       <div className="flex items-center justify-between">
-        <span className="text-sm text-gray-300 font-medium">{skill.name}</span>
-        <span className="text-xs text-gray-500 font-mono">{skill.level}%</span>
+        <span className="text-base md:text-lg text-gray-200 font-semibold">{skill.name}</span>
+        <span className="text-sm md:text-base text-gray-400 font-mono">{skill.level}%</span>
       </div>
-      <div className="h-2 rounded-full bg-white/5 overflow-hidden">
+      <div className="h-2.5 rounded-full bg-white/5 overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
           animate={isInView ? { width: `${skill.level}%` } : { width: 0 }}
@@ -85,7 +85,7 @@ function SkillBar({ skill, color, delay }: { skill: Skill; color: string; delay:
           }}
         >
           <div
-            className="absolute right-0 top-0 bottom-0 w-2 rounded-full"
+            className="absolute right-0 top-0 bottom-0 w-2.5 rounded-full"
             style={{
               backgroundColor: color,
               boxShadow: `0 0 8px ${color}`,
@@ -111,22 +111,22 @@ export default function SkillsSection() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-[#38bdf8] text-sm font-mono tracking-wider uppercase mb-3"
+          className="text-[#38bdf8] text-base font-mono tracking-wider uppercase mb-3"
         >
           Technologies & Competencies
         </motion.p>
-        <h2 className="text-3xl md:text-4xl font-bold text-white">
+        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white">
           Skills & <span className="text-[#38bdf8] glow-text-blue">Expertise</span>
         </h2>
       </div>
 
       {/* Category Tabs */}
-      <div className="flex flex-wrap justify-center gap-3 mb-12">
+      <div className="flex flex-wrap justify-center gap-3.5 mb-14">
         {skillCategories.map((category) => (
           <button
             key={category.title}
             onClick={() => setActiveCategory(category.title)}
-            className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
+            className={`px-6 py-3 rounded-xl text-base md:text-lg font-medium transition-all duration-300 ${
               activeCategory === category.title
                 ? 'text-white'
                 : 'text-gray-400 bg-white/5 hover:bg-white/10 hover:text-gray-200 border border-white/5'
@@ -137,7 +137,7 @@ export default function SkillsSection() {
                     backgroundColor: `color-mix(in srgb, ${category.color} 12.5%, transparent)`,
                     border: `1px solid color-mix(in srgb, ${category.color} 25%, transparent)`,
                     color: category.color,
-                    boxShadow: `0 0 15px color-mix(in srgb, ${category.color} 8.2%, transparent)`,
+                    boxShadow: `0 0 18px color-mix(in srgb, ${category.color} 8.2%, transparent)`,
                   }
                 : {}
             }
@@ -148,8 +148,8 @@ export default function SkillsSection() {
       </div>
 
       {/* Skills Display */}
-      <div ref={gridRef} className="max-w-3xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-x-12 gap-y-6">
+      <div ref={gridRef} className="max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-x-14 gap-y-8">
           {activeSkills?.skills.map((skill, i) => (
             <SkillBar
               key={`${activeCategory}-${skill.name}`}
@@ -165,10 +165,10 @@ export default function SkillsSection() {
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ delay: 0.5 }}
-          className="mt-12 text-center"
+          className="mt-16 text-center"
         >
-          <p className="text-gray-500 text-sm mb-4">Core Resume Competencies & Tooling</p>
-          <div className="flex flex-wrap justify-center gap-2">
+          <p className="text-gray-300 text-base md:text-lg font-medium mb-6">Core Resume Competencies & Tooling</p>
+          <div className="flex flex-wrap justify-center gap-3">
             {[
               'Python Programing', 'Strategic & tactical planning', 'Leadership Skills',
               'Complex problem solving expertise', 'Collaboration skills', 'AI / ML Technologies',
@@ -178,7 +178,7 @@ export default function SkillsSection() {
             ].map((skill) => (
               <span
                 key={skill}
-                className="px-3 py-1.5 text-xs rounded-lg text-gray-400 bg-white/5 border border-white/5 hover:border-[#38bdf8]/30 hover:text-[#38bdf8] transition-colors duration-200 cursor-default"
+                className="px-4 py-2 text-sm md:text-base font-medium rounded-xl text-gray-300 bg-white/5 border border-white/10 hover:border-[#38bdf8]/40 hover:text-[#38bdf8] transition-colors duration-200 cursor-default"
               >
                 {skill}
               </span>

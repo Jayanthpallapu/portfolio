@@ -26,13 +26,13 @@ export default function Footer() {
         }}
       />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="relative z-10 max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1536px] mx-auto px-4 sm:px-8 lg:px-12 2xl:px-20 py-10">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Copyright */}
-          <div className="flex items-center gap-1 text-sm text-gray-500">
+          <div className="flex items-center gap-1.5 text-base text-gray-400">
             <span>&copy; {new Date().getFullYear()} Jayanth Pallapu. Built with</span>
-            <Heart size={14} className="text-[#3b82f6] fill-[#3b82f6]" />
-            <span>and Python.</span>
+            <Heart size={16} className="text-[#3b82f6] fill-[#3b82f6]" />
+            <span>and Next.js.</span>
           </div>
 
           {/* Social Links */}

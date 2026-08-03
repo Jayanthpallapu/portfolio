@@ -20,7 +20,7 @@ export default function SectionWrapper({ children, id, className = '', backgroun
     <section
       id={id}
       ref={ref}
-      className={`relative py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden ${className}`}
+      className={`relative py-24 md:py-32 px-4 sm:px-8 lg:px-12 2xl:px-20 overflow-hidden ${className}`}
     >
       {/* Animated background */}
       {backgroundVariant && (
@@ -32,7 +32,7 @@ export default function SectionWrapper({ children, id, className = '', backgroun
         initial={{ opacity: 0, y: 60 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
-        className="relative z-10 max-w-6xl mx-auto"
+        className="relative z-10 max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1536px] mx-auto"
       >
         {children}
       </motion.div>
