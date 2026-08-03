@@ -120,7 +120,7 @@ export default function HeroSection() {
             className="flex items-center justify-center lg:justify-start gap-2 text-blue-300/70 mb-3 w-full"
           >
             <MapPin size={15} />
-            <span className="text-sm md:text-base tracking-wide font-medium">Bangalore, India</span>
+            <span className="text-sm md:text-base tracking-wide font-medium">Bangalore, India (Happy to relocate)</span>
           </motion.div>
 
           {/* Name */}

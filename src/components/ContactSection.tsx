@@ -16,7 +16,7 @@ const contactInfo = [
   {
     icon: <MapPin size={20} />,
     label: 'Location',
-    value: 'Bangalore, India',
+    value: 'Bangalore, India (Happy to relocate)',
     href: null,
     color: '#818cf8',
   },
